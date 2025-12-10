@@ -42,23 +42,37 @@ class OntologyRAGPipeline:
     # =============================================================
     # FULL SECTION MODE (LLM-ready)
     # =============================================================
-    def build_full_sections(self, ranked_nodes: List[dict]):
+    def build_full_sections(self, ranked_nodes: List[dict]) -> List[dict]:
         """
-        Если секция содержит хотя бы один релевантный узел —
-        мы берём ВЕСЬ текст секции, последовательно.
+        Превращает ranked text-nodes в список секций-кандидатов для LLM.
+
+        - Группирует text_nodes по section_id.
+        - Для каждой секции собирает полный текст (как раньше).
+        - Считает агрегированный score (max по узлам секции).
+        - Сохраняет node_ids, которые подсветили секцию.
+
+        Формат элемента результата:
+        {
+            "section_id": str,
+            "title": str,
+            "text": str,
+            "score": float,
+            "node_ids": List[str],
+        }
         """
 
-        # 1. Определяем релевантные секции
-        relevant_sections = set()
+        # 1. Группируем узлы по секции
+        section_to_nodes: Dict[str, List[dict]] = {}
         for item in ranked_nodes:
             sid = item["section_id"]
-            if sid is not None:
-                relevant_sections.add(sid)
+            if sid is None:
+                continue
+            section_to_nodes.setdefault(sid, []).append(item)
 
         output = []
 
-        # 2. Для каждой секции формируем полный текст
-        for sid in relevant_sections:
+        # 2. Для каждой секции формируем полный текст и агрегированный score
+        for sid, nodes in section_to_nodes.items():
             sec = self.sections[sid]
 
             # Заголовок секции
@@ -77,23 +91,38 @@ class OntologyRAGPipeline:
                 nid = x[0]
                 try:
                     return int(nid.split("ch")[1])
-                except:
-                    return 999999
+                except Exception:
+                    return 999_999
 
             chunks_sorted = sorted(chunks, key=sort_key)
             full_text = "\n".join(t for _, t in chunks_sorted).strip()
+
+            # Агрегированный score: берём максимум по узлам секции
+            section_score = float(
+                max(node["score"] for node in nodes)
+            )
+
+            node_ids = [node["node_id"] for node in nodes]
 
             output.append({
                 "section_id": sid,
                 "title": title,
                 "text": full_text,
+                "score": section_score,
+                "node_ids": node_ids,
             })
 
-        # Стабильная сортировка секций по номеру
-        return sorted(
-            output,
-            key=lambda x: int(x["section_id"].split("ch")[1])
-        )
+        # 3. Сортируем секции для стабильности:
+        #    сначала по убыванию score, потом по номеру секции
+        def section_sort_key(item: dict):
+            sid = item["section_id"]
+            try:
+                order = int(sid.split("ch")[1])
+            except Exception:
+                order = 999_999
+            return (-item["score"], order)
+
+        return sorted(output, key=section_sort_key)
 
     # =============================================================
     # MAIN PIPELINE METHOD
@@ -123,7 +152,7 @@ class OntologyRAGPipeline:
             top_k=self.top_k_text,
         )
 
-        # 5. Build detail list for debug / interpretability
+        # 5. Детализированный список текстовых узлов (для интерпретации / отладки)
         text_context = []
         for nid, score in ranked:
             tn = self.text_nodes[nid]
@@ -135,10 +164,10 @@ class OntologyRAGPipeline:
                 "score": float(score),
             })
 
-        # 6. NEW: full-section extraction
-        flat_text = self.build_full_sections(text_context)
+        # 6. Секции-кандидаты для LLM-агента (LLM-ready)
+        section_candidates = self.build_full_sections(text_context)
 
-        # 7. Graph context (optional, for visualization)
+        # 7. Графовый контекст (для визуализации / глубокой логики)
         graph_nodes = list(all_nodes)
         graph_edges = [
             {"from": e.from_id, "to": e.to_id, "type": e.relation_type}
@@ -146,9 +175,11 @@ class OntologyRAGPipeline:
             if e.from_id in all_nodes and e.to_id in all_nodes
         ]
 
+        # 8. Итоговый формат, удобный для дальнейшего LLM-агента
         return {
-            "text_context": text_context,
-            "flat_text": flat_text,
+            "query": query,
+            "section_candidates": section_candidates,
+            "text_nodes": text_context,
             "graph_context": {
                 "nodes": graph_nodes,
                 "edges": graph_edges,
