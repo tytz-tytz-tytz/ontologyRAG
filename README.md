@@ -1,169 +1,155 @@
 # OntologyRAG
 
-**OntologyRAG** — исследовательский прототип RAG‑системы, ориентированный на работу с крупными структурированными документами. Система сочетает онтологическое представление данных, графовый обход и семантическое ранжирование, обеспечивая воспроизводимое и интерпретируемое извлечение релевантного контента.
+This repository contains a research implementation of an ontology-based retrieval pipeline (OntologyRAG) and supporting scripts for data preprocessing and query execution.
+
+The codebase is intended for controlled experimental evaluation and comparison with other retrieval approaches (e.g., classic RAG, graph-based RAG) under identical input conditions.
 
 ---
 
-## Возможности
+## What this repository does
 
-- Построение оффлайн‑индекса документации:
-  - выделение структурных секций
-  - нарезка текста на смысловые фрагменты
-  - построение графа связей между разделами
-  - сохранение итогового индекса в `ontology_index.pkl`
+- Cleans raw document graph data (nodes and edges)
+- Builds an ontology-aware retrieval index from cleaned data
+- Executes a fixed set of queries against the index
+- Saves retrieval outputs in a neutral JSON format suitable for blind evaluation
 
-- Выполнение онлайн‑запросов:
-  - векторизация запросов
-  - семантический выбор стартовых секций (drill)
-  - контролируемое расширение графа (graph expansion)
-  - ранжирование текстовых фрагментов
-  - формирование агрегированного результата (`flat_text`) для последующей обработки LLM.
+The repository does **not** include:
+- serving or API code
+- user interfaces
+- online systems
+- training procedures
 
----
-
-## Источник онтологии
-
-Онтология, используемая в данном проекте, формируется в отдельном репозитории, посвященном процедурам извлечения структуры документа, построению графа разделов и подготовке семантических связей между текстовыми узлами.  
-
-Полный цикл построения онтологии доступен по [ссылке](https://github.com/tytz-tytz-tytz/bugsy_ontology.git)
-
-Данный проект использует только результирующие артефакты: JSON-файлы с узлами и ребрами (`graphrag_nodes.json`, `graphrag_edges.json`) и формирует на их основе оффлайн-индекс для RAG-модуля.
+All pipelines are executed offline.
 
 ---
 
-## Структура репозитория
+## Repository structure
 
 ```
 ontologyRAG/
-├── index/                        # Оффлайн‑артефакты индексации
+├── artifacts/
+│   ├── indexes/
+│   │   ├── ontology_index_dir/
+│   │   └── ontology_index.pkl
+│   ├── ontology_rag_results/
+│   └── reports/
+├── configs/
+├── data/
+│   ├── raw/
+│   │   ├── graphrag_nodes.json
+│   │   └── graphrag_edges.json
+│   ├── processed/
+│   │   ├── graphrag_nodes.cleaned.json
+│   │   └── graphrag_edges.cleaned.json
+│   └── eval/
+│       └── queries.jsonl
+├── scripts/
+│   ├── preprocess_graph_data.py
+│   ├── build_ontology_index.py
+│   ├── run_ontology_interactive.py
+│   └── run_queries_ontology.py
 ├── src/
-│   ├── data/                     # Модели Section, TextNode, Edge
-│   ├── index/                    # Embeddings, загрузка/сохранение индекса
-│   ├── ontology/                 # Построение онтологии
-│   └── rag/
-│       ├── drill.py              # Выбор стартовых секций
-│       ├── expand.py             # BFS‑обход графа
-│       ├── score.py              # Ранжирование узлов текста
-│       └── pipeline.py           # Основной онлайн‑пайплайн RAG
-├── tests/                        # Тесты
-├── build_index.py                # Построение оффлайн‑индекса
-├── main.py                       # Интерфейс командной строки
-├── graph_rag_nodes.json          # Узлы графа
-├── graph_rag_edges.json          # Ребра графа
-├── ontology_index.pkl            # Итоговый индекс
-└── requirements.txt
+│   └── ontology_rag/
+├── tests/
+├── pyproject.toml
+└── README.md
 ```
 
 ---
 
-## Установка
+## Setup
 
-### 1. Клонирование
-```bash
-git clone https://github.com/tytz-tytz-tytz/ontologyRAG.git
-cd ontologyRAG
-```
+### Python version
+- Python 3.12
 
-### 2. Создание окружения
-```bash
-python -m venv venv
-source venv/bin/activate   # Windows: venv\\Scripts\\activate
-pip install -r requirements.txt
-```
+### Installation
 
----
-
-## Построение оффлайн‑индекса
+Create and activate a virtual environment, then install the project in editable mode:
 
 ```bash
-python build_index.py
+pip install -e .
 ```
 
-Скрипт формирует секции, текстовые фрагменты, граф связей и сохраняет индекс в виде набора артефактов (`*.json`, `ontology_index.pkl`).
+All dependencies are specified in `pyproject.toml`.
 
 ---
 
-## Запуск RAG‑пайплайна
+## Data preprocessing
+
+Clean raw graph data before building any index:
 
 ```bash
-python main.py
+python scripts/preprocess_graph_data.py
 ```
 
-После ввода запроса система выводит:
+This step:
+- removes non-informative text fragments (e.g., page numbers, punctuation-only nodes)
+- normalizes text
+- removes dangling edges
 
-- **text_context** — релевантные фрагменты текста;
-- **flat_text** — агрегированный разделами материал для LLM;
-- **graph_context** — подграф, использованный при поиске.
+Cleaned data is written to:
+
+```
+data/processed/
+```
+
+All downstream steps must use the processed data.
 
 ---
 
-## Пример результата (`flat_text`)
+## Building the ontology index
 
-```
-### Отписка от рассылок
-Маркетолог может предоставить клиентам возможность…
+Build the ontology-aware retrieval index:
 
-### Расширенные настройки
-Опция "Отправлять сообщения даже если клиент отписался" …
-
-...
+```bash
+python scripts/build_ontology_index.py
 ```
 
-Результат пригоден для прямой подачи в LLM‑модели.
+The index is stored in:
+
+```
+artifacts/indexes/ontology_index_dir/
+```
 
 ---
 
-## Внутренние компоненты
+## Running queries (batch mode)
 
-### DrillSelector
-Оценка близости секций к запросу и выбор стартовых узлов.
+Execute a fixed set of evaluation queries:
 
-### GraphExpander
-Контролируемый обход графа:
-- глубина по умолчанию — 3;
-- максимальное количество узлов — 200.
+```bash
+python scripts/run_queries_ontology.py
+```
 
-### NodeScorer
-Ранжирование текстовых узлов с учетом:
-- косинусной близости векторов,
-- расстояния по графу,
-- параметров конфигурации.
+- Queries are read from `data/eval/queries.jsonl`
+- One JSON file is written per query
+- Results are stored in:
 
-### Формирование `flat_text`
-Группировка узлов по секциям, сортировка и сборка в удобную структуру.
+```
+artifacts/ontology_rag_results/
+```
+
+Each result file has the format:
+
+```json
+{
+  "id": "Q001",
+  "query": "...",
+  "output": [
+    "...text fragment 1...",
+    "...text fragment 2..."
+  ]
+}
+```
+
+The output contains **only retrieved text fragments**, without metadata or method identifiers.
 
 ---
 
-## Конфигурация
+## Interactive mode (optional)
 
-Пример инициализации пайплайна:
+For manual inspection:
 
-```python
-pipeline = OntologyRAGPipeline(
-    sections=index.sections,
-    text_nodes=index.text_nodes,
-    graph_adj=index.graph_adj,
-    embedding_model=model,
-    max_graph_depth=3,
-    top_k_text=20,
-)
+```bash
+python scripts/run_ontology_interactive.py
 ```
----
-
-## Возможные проблемы и решения
-
-### Индекс не найден
-Запустить:
-```
-python build_index.py
-```
-
-### Недостаточно информации в ответе
-Увеличить параметры:
-```python
-max_graph_depth=4
-top_k_text=50
-```
-
-### LLM генерирует неполные ответы
-Рекомендуется расширять набор возвращаемых секций (`top_k_text`) или включать извлечение полных секций.

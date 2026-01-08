@@ -1,15 +1,15 @@
-# main.py
+# run_ontology_interactive.py
 
 import json
 
-from src.index.store import load_index
-from src.index.embeddings import EmbeddingModel
-from src.rag.pipeline import OntologyRAGPipeline
+from ontology_rag.index.store import load_index
+from ontology_rag.index.embeddings import EmbeddingModel
+from ontology_rag.rag.pipeline import OntologyRAGPipeline
 
 
 def run():
     print("=== Загрузка оффлайн-индекса ===")
-    sections, text_nodes, graph_adj = load_index("index")
+    sections, text_nodes, graph_adj = load_index("artifacts/indexes/ontology_index_dir")
 
     print("=== Инициализация embedding-модели ===")
     model = EmbeddingModel(device="cpu")

@@ -1,1 +1,15 @@
 venv/
+
+# artifacts & indexes
+index/
+*.pkl
+artifacts/
+
+# python cache
+__pycache__/
+*.pyc
+
+# python build / packaging
+*.egg-info/
+dist/
+build/
