@@ -29,35 +29,40 @@ The goal is to study how structural knowledge (ontology + graph topology) affect
   - Dense (embedding-based) index
 - Executes the same query set across all retrieval methods
 - Produces **method-agnostic JSON artifacts** suitable for blind evaluation
-- Prepares normalized judge payloads for LLM-as-judge experiments
+- Builds **LLM-as-a-judge prompts** in a fixed, strict format
+- Aggregates and analyzes judge outputs according to predefined metrics
 
 The repository does **not** include:
 - serving or API code
 - user interfaces
 - online systems
 - training or fine-tuning procedures
+- scripts for directly calling LLM APIs
 
-All pipelines are executed **offline**.
+All pipelines are executed **offline**.  
+LLM inference (judge calls) is expected to be performed externally.
 
 ---
 
 ## Repository structure
 
-```
+```text
 ontologyRAG/
-├── artifacts/                     # Generated artifacts (not committed)
-│   ├── bm25_rag_results/           # BM25 retrieval outputs
-│   ├── bm25_rag_heuristic_results/ # BM25 + heuristics outputs
-│   ├── classic_rag_results/        # Classic dense RAG outputs
+├── artifacts/                      # Generated artifacts (not committed)
+│   ├── bm25_rag_results/            # BM25 retrieval outputs
+│   ├── bm25_rag_heuristic_results/  # BM25 + heuristics outputs
+│   ├── classic_rag_results/         # Classic dense RAG outputs
 │   ├── classic_rag_heuristic_results/
-│   ├── ontology_rag_results/       # OntologyRAG outputs
-│   ├── indexes/                    # Serialized retrieval indexes
+│   ├── ontology_rag_results/        # OntologyRAG outputs
+│   ├── indexes/                     # Serialized retrieval indexes
 │   │   ├── bm25_index.pkl
 │   │   ├── classic_rag_index.pkl
 │   │   ├── ontology_index.pkl
 │   │   └── ontology_index_dir/
-│   ├── judge_payloads/             # Prepared inputs for LLM-as-judge
-│   └── reports/                    # Aggregated evaluation reports
+│   ├── judge_payloads/              # Anonymized retrieval results per query
+│   ├── judge_prompts/               # Fully built LLM-as-judge prompts
+│   ├── judge_outputs/               # Raw LLM judge responses (external)
+│   └── reports/                     # Aggregated evaluation reports
 │
 ├── configs/
 │   └── judge_prep.json              # Configuration for judge payload generation
@@ -83,7 +88,9 @@ ontologyRAG/
 │   ├── run_queries_classic_rag_heuristic.py
 │   ├── run_queries_ontology.py
 │   ├── run_ontology_interactive.py
-│   └── build_judge_payloads.py
+│   ├── build_judge_payloads.py
+│   ├── build_judge_prompts.py
+│   └── build_judge_reports.py
 │
 ├── src/
 │   ├── bm25_rag/                    # BM25 retrieval implementation
@@ -92,8 +99,7 @@ ontologyRAG/
 │   │   ├── ontology/                # Ontology structures and relations
 │   │   ├── index/                   # Ontology-aware index logic
 │   │   └── rag/                     # Retrieval pipeline
-│   └── judge_prep/                  # Cleaning & truncation logic for evaluation
-│       └── clean_cap.py
+│   └── judge_prep/                  # Prompt building & parsing logic
 │
 ├── pyproject.toml
 ├── README.md
@@ -105,6 +111,7 @@ ontologyRAG/
 ## Setup
 
 ### Python version
+
 - Python 3.12
 
 ### Installation
@@ -134,7 +141,7 @@ This step:
 
 Cleaned data is written to:
 
-```
+```text
 data/processed/
 ```
 
@@ -155,7 +162,7 @@ The following retrieval pipelines are implemented:
 All methods:
 - operate on the same corpus
 - use the same query set
-- differ *only* in retrieval strategy
+- differ only in retrieval strategy
 
 ---
 
@@ -186,49 +193,102 @@ Example output format:
 }
 ```
 
-The output contains **only retrieved text**, without method identifiers or scores.
+The output contains only retrieved text, without method identifiers or scores.
 
 ---
 
-## Output artifacts
+## LLM-as-judge evaluation pipeline
 
-Each retrieval method produces comparable artifacts:
+### Judge payloads
 
-- One JSON file per query
-- Each file contains:
-  - query identifier
-  - query text
-  - ordered list of retrieved text fragments
-
-These artifacts are the **unit of comparison** in evaluation.
-
-For LLM-as-judge experiments, cleaned and normalized payloads are generated using:
+For blind evaluation, retrieval outputs from different methods are merged and anonymized:
 
 ```bash
 python scripts/build_judge_payloads.py
 ```
 
-Judge-ready files are written to:
+Outputs are written to:
 
-```
+```text
 artifacts/judge_payloads/
 ```
 
 Each payload:
-- contains multiple anonymized retrieval outputs (A, B, C, …)
-- uses a fixed token budget per method
-- includes a private mapping for result decoding
+- contains the user query
+- includes multiple candidate contexts labeled A–E
+- includes a private mapping from letters to retrieval methods
+- is method-agnostic and suitable for blind judging
+
+### Judge prompts
+
+LLM-as-judge prompts are built from payloads using a fixed instruction template:
+
+```bash
+python scripts/build_judge_prompts.py
+```
+
+Prompts can be exported as:
+- Markdown (`.md`)
+- Chat-style messages (`.messages.json`)
+- JSONL for batch inference
+
+The prompt specifies:
+- evaluation task and constraints
+- required metrics (relevance, answerability, noise, overall)
+- strict JSON output schema
+
+**Important:**  
+This repository does not perform LLM inference.  
+Users are expected to submit prompts to an external LLM and save raw responses manually.
+
+### Judge outputs (external)
+
+Raw LLM responses must be saved to:
+
+```text
+artifacts/judge_outputs/<model_name>/Qxxx_<replica>.json
+```
+
+Each file is expected to contain a JSON object with a `judge_response` field
+matching the required schema defined in the prompt.
+
+Multiple replicas per query are supported.
+
+### Aggregation and reports
+
+Judge outputs are parsed and aggregated using:
+
+```bash
+python scripts/build_judge_reports.py \
+  --judge_outputs_dir artifacts/judge_outputs \
+  --judge_payloads_dir artifacts/judge_payloads \
+  --reports_dir artifacts/reports
+```
+
+This produces multiple analysis-ready tables, including:
+- per-candidate metric scores (long format)
+- per-run judge decisions
+- aggregated method-level summaries
+- winner statistics and confidence measures
+
+All reports are written to:
+
+```text
+artifacts/reports/
+```
 
 ---
 
 ## Reproducibility notes
 
-- All retrieval pipelines are **deterministic** given fixed inputs and configurations
-- No stochastic components (sampling, randomness) are used during retrieval
-- Results do not depend on execution order
-- Randomization is applied **only** at the judge-payload construction stage for blind evaluation
+- All retrieval pipelines are deterministic given fixed inputs
+- No stochastic components are used during retrieval
+- Randomization is applied only during:
+  - candidate shuffling in judge payloads
+  - external LLM judge inference
+- Multiple judge replicas are supported and explicitly tracked
 
-This design enables reproducible comparison across methods.
+This design enables controlled and reproducible comparison across retrieval methods.
 
 ---
 
