@@ -1,0 +1,271 @@
+{
+  "query": "настройки SMS провайдера",
+  "drill": {
+    "config": {
+      "top_r": 3,
+      "top_k": 2,
+      "tau_local": 0.35,
+      "tau_child": 0.45,
+      "margin": 0.05
+    },
+    "seed_count": 3,
+    "seed_ids": [
+      "section_ch0886",
+      "section_ch2142",
+      "section_ch2162"
+    ],
+    "seed_levels": [
+      1,
+      1,
+      1
+    ],
+    "seed_local_sim_stats": {
+      "min": 0.7469364404678345,
+      "max": 0.8837267160415649,
+      "mean": 0.800162136554718
+    },
+    "seed_subtree_sim_stats": {
+      "min": 0.7025297284126282,
+      "max": 0.7698232531547546,
+      "mean": 0.7397631406784058
+    }
+  },
+  "expand": {
+    "config": {
+      "max_depth": 3,
+      "max_nodes": 800,
+      "allowed_relations": [
+        "CAPTIONS",
+        "HAS_CHUNK",
+        "HAS_ITEM",
+        "HAS_SUBSECTION",
+        "LINKS_TO"
+      ]
+    },
+    "expanded_node_count": 168,
+    "expanded_edge_count": 171,
+    "dist_stats": {
+      "min": 0,
+      "max": 3,
+      "mean": 1.9642857142857142
+    },
+    "edge_type_counts": {
+      "HAS_CHUNK": 112,
+      "HAS_SUBSECTION": 7,
+      "LINKS_TO": 12,
+      "HAS_ITEM": 26,
+      "CAPTIONS": 14
+    }
+  },
+  "score": {
+    "config": {
+      "mode": "full",
+      "w_text": 1.0,
+      "w_type": 0.3,
+      "w_level": 0.15,
+      "w_dist": 0.2,
+      "type_bonus": {
+        "list_item": 1.0,
+        "chunk": 0.6,
+        "section_title": 0.8,
+        "caption": 0.2
+      },
+      "level_bonus": {
+        "1": 0.1,
+        "2": 0.2,
+        "3": 0.3
+      }
+    },
+    "top_nodes": [
+      {
+        "node_id": "chunk_ch2142",
+        "section_id": "section_ch2142",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.9356427192687988,
+        "score": 0.9306427192687987,
+        "text_preview": "Приложение В. Настройка SMS-провайдера «СМС услуги»"
+      },
+      {
+        "node_id": "chunk_ch0886",
+        "section_id": "section_ch0886",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.8837267160415649,
+        "score": 0.8787267160415648,
+        "text_preview": "Настройка SMS-рассылок"
+      },
+      {
+        "node_id": "chunk_ch2162",
+        "section_id": "section_ch2162",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.8392135500907898,
+        "score": 0.8342135500907897,
+        "text_preview": "Приложение Г. Настройка SMS-провайдера «SMS.ru»"
+      },
+      {
+        "node_id": "chunk_ch2169",
+        "section_id": "section_ch2162",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7400976419448853,
+        "score": 0.7350976419448851,
+        "text_preview": "1. При создании SMS-провайдера в поле «Отправитель» указывается зарегистрированный в SMS.ru отправитель или номер телефона, на который зарегистрирован аккаунт (если отправитель не зарегистрирован).\n2.…"
+      },
+      {
+        "node_id": "chunk_ch2148",
+        "section_id": "section_ch2142",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7400829792022705,
+        "score": 0.7350829792022704,
+        "text_preview": "При работе с провайдером «СМС услуги» есть ряд особенностей:"
+      },
+      {
+        "node_id": "chunk_ch0922",
+        "section_id": "section_ch0922",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.9197946786880493,
+        "score": 0.7297946786880493,
+        "text_preview": "Добавление SMS-провайдера в рассылку"
+      },
+      {
+        "node_id": "chunk_ch2150",
+        "section_id": "section_ch2142",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.8477271795272827,
+        "score": 0.7227271795272827,
+        "text_preview": "Рисунок 216 — Ввод параметров для SMS-провайдера «СМС услуги»"
+      },
+      {
+        "node_id": "chunk_ch0887",
+        "section_id": "section_ch0887",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.906690776348114,
+        "score": 0.716690776348114,
+        "text_preview": "Регистрация SMS-провайдера"
+      },
+      {
+        "node_id": "chunk_ch2168",
+        "section_id": "section_ch2162",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7127830386161804,
+        "score": 0.7077830386161803,
+        "text_preview": "При работе с провайдером «SMS.ru» есть ряд особенностей:"
+      },
+      {
+        "node_id": "chunk_ch2149",
+        "section_id": "section_ch2142",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6895583868026733,
+        "score": 0.6845583868026732,
+        "text_preview": "1. При создании SMS-провайдера в поле «Логин» указывается произвольная последовательность символов, например, «12345» (см. Рисунок 216)."
+      },
+      {
+        "node_id": "chunk_ch0895",
+        "section_id": "section_ch0887",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8053343296051025,
+        "score": 0.6153343296051025,
+        "text_preview": "• СМС услуги ("
+      },
+      {
+        "node_id": "chunk_ch0923",
+        "section_id": "section_ch0922",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7998279333114624,
+        "score": 0.6098279333114623,
+        "text_preview": "После создания SMS-провайдер может быть добавлен в любую рассылку. Это позволит добавить в рассылку SMS-блок и отправлять SMS клиентам, которые еще не подключились к мессенджерам."
+      },
+      {
+        "node_id": "chunk_ch0955",
+        "section_id": "section_ch0948",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7904262542724609,
+        "score": 0.6004262542724609,
+        "text_preview": "Для настройки лендинга в SMS-блоке необходимо:"
+      },
+      {
+        "node_id": "chunk_ch2156",
+        "section_id": "section_ch2142",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5897484421730042,
+        "score": 0.584748442173004,
+        "text_preview": "3. В поле «Отправитель» указывается отправитель, добавленный в разделе «Рассылка СМС» - «Имена отправителя» (см. Рисунок 219):"
+      },
+      {
+        "node_id": "chunk_ch0889",
+        "section_id": "section_ch0887",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7700900435447693,
+        "score": 0.5800900435447692,
+        "text_preview": "• SMSC ("
+      },
+      {
+        "node_id": "chunk_ch0926",
+        "section_id": "section_ch0922",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7664530277252197,
+        "score": 0.5764530277252197,
+        "text_preview": "Есть возможность принудительной отправки SMS, даже если клиент уже подключился с использованием мессенджера и подтвердил номер телефона в мессенджере. Для этого"
+      },
+      {
+        "node_id": "chunk_ch0904",
+        "section_id": "section_ch0887",
+        "type": "caption",
+        "dist": 2,
+        "sim": 0.8798555731773376,
+        "score": 0.5698555731773377,
+        "text_preview": "Рисунок 103 — Переход к добавлению SMS-провайдера"
+      },
+      {
+        "node_id": "chunk_ch0934",
+        "section_id": "section_ch0931",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7579560875892639,
+        "score": 0.5679560875892639,
+        "text_preview": "SMS-блок добавляется в сценарий так же, как и обычный блок, кроме того, что связь нельзя «снять», а таймаут — изменить (см. Рисунок 107). При запуске рассылки клиенты будут получать либо сообщения в м…"
+      },
+      {
+        "node_id": "chunk_ch2153",
+        "section_id": "section_ch2142",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.6861759424209595,
+        "score": 0.5611759424209595,
+        "text_preview": "Рисунок 217 — Раздел «API» личного кабинета на сервисе «СМС услуги»"
+      },
+      {
+        "node_id": "chunk_ch0905",
+        "section_id": "section_ch0887",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.745245635509491,
+        "score": 0.5552456355094909,
+        "text_preview": "2. Далее необходимо указать данные учетной записи выбранного SMS-провайдера (см. Рисунок 104):"
+      }
+    ],
+    "ranked_sim_stats": {
+      "min": 0.5897484421730042,
+      "max": 0.9356427192687988,
+      "mean": 0.790321546792984
+    },
+    "type_counts_in_topk": {
+      "chunk": 17,
+      "caption": 3
+    }
+  }
+}

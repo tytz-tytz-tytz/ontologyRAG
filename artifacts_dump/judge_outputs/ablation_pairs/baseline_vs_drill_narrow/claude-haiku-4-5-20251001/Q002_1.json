@@ -1,0 +1,22 @@
+{
+  "qid": "Q002",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671130,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Context A contains information about message blocks and their organization, which relates to the structure of mailing blocks. Context B only provides a section header about launching, restarting, and stopping mailings without any actual content, making it unable to support answering the query about connections between mailing blocks.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Context A contains information about message blocks and their organization, which relates to the structure of mailing blocks. Context B only provides a section header about launching, restarting, and stopping mailings without any actual content, making it unable to support answering the query about connections between mailing blocks."
+  },
+  "error": null
+}

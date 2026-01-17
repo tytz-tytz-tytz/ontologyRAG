@@ -1,0 +1,63 @@
+{
+  "qid": "Q002",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667865,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 4,\n    \"B\": 1,\n    \"C\": 5,\n    \"D\": 1,\n    \"E\": 2\n  },\n  \"answerability\": {\n    \"A\": 2,\n    \"B\": 0,\n    \"C\": 5,\n    \"D\": 0,\n    \"E\": 1\n  },\n  \"noise\": {\n    \"A\": 3,\n    \"B\": 5,\n    \"C\": 1,\n    \"D\": 5,\n    \"E\": 4\n  },\n  \"overall\": {\n    \"A\": 2,\n    \"B\": 0,\n    \"C\": 5,\n    \"D\": 0,\n    \"E\": 1\n  },\n  \"winner\": \"C\",\n  \"ranking\": [\n    \"C\",\n    \"A\",\n    \"E\",\n    \"B\",\n    \"D\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 5,\n  \"rationales\": {\n    \"A\": \"Mentions connections between action blocks but lacks comprehensive explanation. Contains some relevant fragments but mostly repetitive headers without substantive content about how connections work.\",\n    \"B\": \"Completely irrelevant—discusses message ordering within a block, not connections between blocks. No useful information for the query.\",\n    \"C\": \"Directly and comprehensively addresses the query with clear explanations of how connections between blocks work, including event-to-action block relationships, multiple connections to one block, and the mechanics of creating connections in the designer.\",\n    \"D\": \"Mostly irrelevant headers and section titles with no substantive content about connections between blocks. Appears to be a table of contents or navigation structure.\",\n    \"E\": \"Tangentially related to mailings and block transitions but focuses on mailing states, event blocks, and recipient configuration rather than explaining connections between blocks specifically.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 4,
+      "B": 1,
+      "C": 5,
+      "D": 1,
+      "E": 2
+    },
+    "answerability": {
+      "A": 2,
+      "B": 0,
+      "C": 5,
+      "D": 0,
+      "E": 1
+    },
+    "noise": {
+      "A": 3,
+      "B": 5,
+      "C": 1,
+      "D": 5,
+      "E": 4
+    },
+    "overall": {
+      "A": 2,
+      "B": 0,
+      "C": 5,
+      "D": 0,
+      "E": 1
+    },
+    "winner": "C",
+    "ranking": [
+      "C",
+      "A",
+      "E",
+      "B",
+      "D"
+    ],
+    "failure_letters": [],
+    "confidence": 5,
+    "rationales": {
+      "A": "Mentions connections between action blocks but lacks comprehensive explanation. Contains some relevant fragments but mostly repetitive headers without substantive content about how connections work.",
+      "B": "Completely irrelevant—discusses message ordering within a block, not connections between blocks. No useful information for the query.",
+      "C": "Directly and comprehensively addresses the query with clear explanations of how connections between blocks work, including event-to-action block relationships, multiple connections to one block, and the mechanics of creating connections in the designer.",
+      "D": "Mostly irrelevant headers and section titles with no substantive content about connections between blocks. Appears to be a table of contents or navigation structure.",
+      "E": "Tangentially related to mailings and block transitions but focuses on mailing states, event blocks, and recipient configuration rather than explaining connections between blocks specifically."
+    }
+  },
+  "error": null
+}

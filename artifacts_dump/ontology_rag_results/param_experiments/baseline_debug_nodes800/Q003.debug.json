@@ -1,0 +1,270 @@
+{
+  "query": "добавление действий в блоки рассылки",
+  "drill": {
+    "config": {
+      "top_r": 3,
+      "top_k": 2,
+      "tau_local": 0.35,
+      "tau_child": 0.45,
+      "margin": 0.05
+    },
+    "seed_count": 3,
+    "seed_ids": [
+      "section_ch0113",
+      "section_ch1274",
+      "section_ch0834"
+    ],
+    "seed_levels": [
+      1,
+      1,
+      1
+    ],
+    "seed_local_sim_stats": {
+      "min": 0.616693377494812,
+      "max": 0.7153779864311218,
+      "mean": 0.6569495797157288
+    },
+    "seed_subtree_sim_stats": {
+      "min": 0.616693377494812,
+      "max": 0.7153779864311218,
+      "mean": 0.6544854839642843
+    }
+  },
+  "expand": {
+    "config": {
+      "max_depth": 3,
+      "max_nodes": 800,
+      "allowed_relations": [
+        "CAPTIONS",
+        "HAS_CHUNK",
+        "HAS_ITEM",
+        "HAS_SUBSECTION",
+        "LINKS_TO"
+      ]
+    },
+    "expanded_node_count": 650,
+    "expanded_edge_count": 647,
+    "dist_stats": {
+      "min": 0,
+      "max": 3,
+      "mean": 2.193846153846154
+    },
+    "edge_type_counts": {
+      "HAS_CHUNK": 443,
+      "HAS_SUBSECTION": 25,
+      "HAS_ITEM": 97,
+      "CAPTIONS": 82
+    }
+  },
+  "score": {
+    "config": {
+      "mode": "full",
+      "w_text": 1.0,
+      "w_type": 0.3,
+      "w_level": 0.15,
+      "w_dist": 0.2,
+      "type_bonus": {
+        "list_item": 1.0,
+        "chunk": 0.6,
+        "section_title": 0.8,
+        "caption": 0.2
+      },
+      "level_bonus": {
+        "1": 0.1,
+        "2": 0.2,
+        "3": 0.3
+      }
+    },
+    "top_nodes": [
+      {
+        "node_id": "chunk_ch0113",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.8046615123748779,
+        "score": 0.7996615123748778,
+        "text_preview": "Настройка сценария рассылки"
+      },
+      {
+        "node_id": "chunk_ch0115",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7289913296699524,
+        "score": 0.7239913296699523,
+        "text_preview": "Сценарий рассылки состоит из:"
+      },
+      {
+        "node_id": "chunk_ch0119",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7102342844009399,
+        "score": 0.7052342844009398,
+        "text_preview": "При создании рассылки в конструкторе автоматически создается событие Start, которое является начальной точкой выполнения сценария рассылки. Также в редакторе отображается кнопка «Добавить блок», при п…"
+      },
+      {
+        "node_id": "chunk_ch0120",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6897450685501099,
+        "score": 0.6847450685501097,
+        "text_preview": "В простейшем случае сценарий рассылки представляет собой событие Start, связанное с одним блоком действий (см. Рисунок 19)."
+      },
+      {
+        "node_id": "chunk_ch0834",
+        "section_id": "section_ch0834",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6387773752212524,
+        "score": 0.6337773752212523,
+        "text_preview": "Запуск, перезапуск и остановка рассылок"
+      },
+      {
+        "node_id": "chunk_ch1275",
+        "section_id": "section_ch1274",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6164125204086304,
+        "score": 0.6114125204086303,
+        "text_preview": "Маркетолог может проводить опросы клиентов с целью сбора информации, требуемой ему или подразделениям компании. Для этого в Maxbot используется специальный блок рассылки – форма. Для добавления формы …"
+      },
+      {
+        "node_id": "chunk_ch0437",
+        "section_id": "section_ch0437",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.798475980758667,
+        "score": 0.6084759807586669,
+        "text_preview": "Упорядочивание сообщений в блоке"
+      },
+      {
+        "node_id": "chunk_ch0116",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6109321117401123,
+        "score": 0.6059321117401122,
+        "text_preview": "• события Start;\n• блоков действий;\n• связей между блоками действий."
+      },
+      {
+        "node_id": "chunk_ch0199",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7843354344367981,
+        "score": 0.594335434436798,
+        "text_preview": "2. Создать рассылку и настроить ее на"
+      },
+      {
+        "node_id": "chunk_ch0122",
+        "section_id": "section_ch0113",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.7161909937858582,
+        "score": 0.5911909937858582,
+        "text_preview": "Рисунок 19 — Создан сценарий простейшей рассылки"
+      },
+      {
+        "node_id": "chunk_ch0114",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5719407200813293,
+        "score": 0.5669407200813292,
+        "text_preview": "Конструктор позволяет задать сценарий рассылки, который будет выполняться для каждого клиента из аудитории рассылки."
+      },
+      {
+        "node_id": "chunk_ch1280",
+        "section_id": "section_ch1274",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5715988874435425,
+        "score": 0.5665988874435424,
+        "text_preview": "Форма состоит из набора вопросов, которые бот задает клиенту в заданной последовательности. Пример такой формы показан на рисунке ниже:"
+      },
+      {
+        "node_id": "chunk_ch0345",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7518666386604309,
+        "score": 0.5618666386604309,
+        "text_preview": "Блок этого типа позволяет вызывать события и использовать их для запуска других рассылок из текущей рассылки."
+      },
+      {
+        "node_id": "chunk_ch0855",
+        "section_id": "section_ch0855",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.748538613319397,
+        "score": 0.5585386133193969,
+        "text_preview": "Запуск рассылки"
+      },
+      {
+        "node_id": "chunk_ch1277",
+        "section_id": "section_ch1274",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.6826720833778381,
+        "score": 0.5576720833778381,
+        "text_preview": "Рисунок 140 — Добавление формы в рассылку"
+      },
+      {
+        "node_id": "chunk_ch0230",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7465041875839233,
+        "score": 0.5565041875839233,
+        "text_preview": "Отписка от рассылок"
+      },
+      {
+        "node_id": "chunk_ch0416",
+        "section_id": "section_ch0414",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7368489503860474,
+        "score": 0.5468489503860473,
+        "text_preview": "Подробнее о возможностях данного блока и особенностях его применения в рассылках см. в разделе"
+      },
+      {
+        "node_id": "chunk_ch0398",
+        "section_id": "section_ch0397",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7345747947692871,
+        "score": 0.544574794769287,
+        "text_preview": "В рассылки любого типа можно вставить блок-комментарий, который будет содержать произвольный текст. Для добавления блока-комментария к рассылке необходимо в левом нижнем углу нажать на кнопку «Добавит…"
+      },
+      {
+        "node_id": "chunk_ch0135",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7282143235206604,
+        "score": 0.5382143235206603,
+        "text_preview": "Отправка сообщения"
+      },
+      {
+        "node_id": "chunk_ch0125",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7186270952224731,
+        "score": 0.5286270952224731,
+        "text_preview": "Блоки действий"
+      }
+    ],
+    "ranked_sim_stats": {
+      "min": 0.5715988874435425,
+      "max": 0.8046615123748779,
+      "mean": 0.7045071452856064
+    },
+    "type_counts_in_topk": {
+      "chunk": 18,
+      "caption": 2
+    }
+  }
+}

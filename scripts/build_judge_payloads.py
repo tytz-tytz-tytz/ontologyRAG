@@ -123,8 +123,10 @@ def _load_config(config_path: Path) -> AppConfig:
 
     # Methods
     methods_raw = cfg_raw.get("methods", [])
-    if not isinstance(methods_raw, list) or len(methods_raw) != 5:
-        raise ValueError("Config must contain exactly 5 methods under 'methods'.")
+    if not isinstance(methods_raw, list) or len(methods_raw) not in (2, 3, 4, 5):
+        raise ValueError("Config must contain 2..5 methods under 'methods'.")
+    n_methods = len(methods_raw)
+
 
     methods: List[MethodSpec] = []
     for m in methods_raw:
@@ -157,9 +159,9 @@ def _load_config(config_path: Path) -> AppConfig:
         keys=[str(k) for k in sh.get("keys", ["A", "B", "C", "D", "E"])],
         mode=str(sh.get("mode", "seed_plus_queryid_hash")),
     )
-    if len(shuffle_cfg.keys) != 5:
-        raise ValueError("shuffle.keys must contain exactly 5 labels (e.g. A..E).")
-    if len(set(shuffle_cfg.keys)) != 5:
+    if len(shuffle_cfg.keys) != n_methods:
+        raise ValueError("shuffle.keys length must match number of methods.")
+    if len(set(shuffle_cfg.keys)) != len(shuffle_cfg.keys):
         raise ValueError("shuffle.keys must be unique.")
     if shuffle_cfg.mode not in ("seed_plus_queryid_hash", "seed_plus_index"):
         raise ValueError("shuffle.mode must be 'seed_plus_queryid_hash' or 'seed_plus_index'.")

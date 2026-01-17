@@ -1,0 +1,65 @@
+{
+  "qid": "Q009",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667920,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 5,\n    \"B\": 5,\n    \"C\": 2,\n    \"D\": 0,\n    \"E\": 1\n  },\n  \"answerability\": {\n    \"A\": 4,\n    \"B\": 4,\n    \"C\": 0,\n    \"D\": 0,\n    \"E\": 0\n  },\n  \"noise\": {\n    \"A\": 1,\n    \"B\": 3,\n    \"C\": 4,\n    \"D\": 0,\n    \"E\": 4\n  },\n  \"overall\": {\n    \"A\": 4,\n    \"B\": 3,\n    \"C\": 0,\n    \"D\": 0,\n    \"E\": 0\n  },\n  \"winner\": \"A\",\n  \"ranking\": [\n    \"A\",\n    \"B\",\n    \"C\",\n    \"D\",\n    \"E\"\n  ],\n  \"failure_letters\": [\n    \"D\"\n  ],\n  \"confidence\": 4,\n  \"rationales\": {\n    \"A\": \"Directly addresses the query with clear explanation of the 'Ход исполнения рассылок' page, how to access it, and what information it contains. Minimal noise, focused content.\",\n    \"B\": \"Contains the same core information as A but includes significant repetition (figure captions repeated twice) and additional noise about SMS-rассылки and types of mailings, reducing clarity.\",\n    \"C\": \"Only provides section headings/table of contents entries without substantive content. Cannot answer the query with only this context.\",\n    \"D\": \"Marked as no relevant context found; provides no information.\",\n    \"E\": \"Discusses scenario setup and launch/restart/stop operations, but does not address the specific topic of tracking execution progress ('ход исполнения'). Mostly irrelevant noise.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 5,
+      "B": 5,
+      "C": 2,
+      "D": 0,
+      "E": 1
+    },
+    "answerability": {
+      "A": 4,
+      "B": 4,
+      "C": 0,
+      "D": 0,
+      "E": 0
+    },
+    "noise": {
+      "A": 1,
+      "B": 3,
+      "C": 4,
+      "D": 0,
+      "E": 4
+    },
+    "overall": {
+      "A": 4,
+      "B": 3,
+      "C": 0,
+      "D": 0,
+      "E": 0
+    },
+    "winner": "A",
+    "ranking": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "failure_letters": [
+      "D"
+    ],
+    "confidence": 4,
+    "rationales": {
+      "A": "Directly addresses the query with clear explanation of the 'Ход исполнения рассылок' page, how to access it, and what information it contains. Minimal noise, focused content.",
+      "B": "Contains the same core information as A but includes significant repetition (figure captions repeated twice) and additional noise about SMS-rассылки and types of mailings, reducing clarity.",
+      "C": "Only provides section headings/table of contents entries without substantive content. Cannot answer the query with only this context.",
+      "D": "Marked as no relevant context found; provides no information.",
+      "E": "Discusses scenario setup and launch/restart/stop operations, but does not address the specific topic of tracking execution progress ('ход исполнения'). Mostly irrelevant noise."
+    }
+  },
+  "error": null
+}

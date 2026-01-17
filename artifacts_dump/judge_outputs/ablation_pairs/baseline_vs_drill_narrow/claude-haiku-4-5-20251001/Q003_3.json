@@ -1,0 +1,22 @@
+{
+  "qid": "Q003",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671154,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Both candidates contain identical content about adding action blocks to mailings through the 'Add block' button. However, candidate B includes an additional section header 'Запуск, перезапуск и остановка рассылок' (Launch, restart and stop mailings) that is irrelevant to the query about adding actions to mailing blocks, introducing topic drift. Candidate A remains focused on the relevant content without extraneous material.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Both candidates contain identical content about adding action blocks to mailings through the 'Add block' button. However, candidate B includes an additional section header 'Запуск, перезапуск и остановка рассылок' (Launch, restart and stop mailings) that is irrelevant to the query about adding actions to mailing blocks, introducing topic drift. Candidate A remains focused on the relevant content without extraneous material."
+  },
+  "error": null
+}

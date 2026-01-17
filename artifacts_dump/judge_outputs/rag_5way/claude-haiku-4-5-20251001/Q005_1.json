@@ -1,0 +1,63 @@
+{
+  "qid": "Q005",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667889,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 3,\n    \"B\": 2,\n    \"C\": 5,\n    \"D\": 4,\n    \"E\": 2\n  },\n  \"answerability\": {\n    \"A\": 1,\n    \"B\": 1,\n    \"C\": 4,\n    \"D\": 2,\n    \"E\": 1\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 3,\n    \"C\": 1,\n    \"D\": 3,\n    \"E\": 3\n  },\n  \"overall\": {\n    \"A\": 2,\n    \"B\": 1,\n    \"C\": 5,\n    \"D\": 2,\n    \"E\": 1\n  },\n  \"winner\": \"C\",\n  \"ranking\": [\n    \"C\",\n    \"A\",\n    \"D\",\n    \"B\",\n    \"E\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 5,\n  \"rationales\": {\n    \"A\": \"Contains relevant headers about form settings but mostly repetitive titles with minimal substantive content about question settings. Does not provide actionable information.\",\n    \"B\": \"Mentions form settings but focuses on macros, external system calls, and form-level settings rather than question-specific settings. Limited relevance to the query.\",\n    \"C\": \"Directly addresses 'Основные настройки вопросов' (basic question settings) with detailed, step-by-step instructions on how to configure questions, including specific settings like answer identifier and question text. Highly relevant and comprehensive.\",\n    \"D\": \"Contains relevant headers and mentions both form settings and question settings, but lacks substantive details. Mostly repetitive titles without actionable content to answer the query.\",\n    \"E\": \"Focuses on form-level settings and technical details about optional questions and macros. Minimal relevance to question-specific settings configuration.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 3,
+      "B": 2,
+      "C": 5,
+      "D": 4,
+      "E": 2
+    },
+    "answerability": {
+      "A": 1,
+      "B": 1,
+      "C": 4,
+      "D": 2,
+      "E": 1
+    },
+    "noise": {
+      "A": 4,
+      "B": 3,
+      "C": 1,
+      "D": 3,
+      "E": 3
+    },
+    "overall": {
+      "A": 2,
+      "B": 1,
+      "C": 5,
+      "D": 2,
+      "E": 1
+    },
+    "winner": "C",
+    "ranking": [
+      "C",
+      "A",
+      "D",
+      "B",
+      "E"
+    ],
+    "failure_letters": [],
+    "confidence": 5,
+    "rationales": {
+      "A": "Contains relevant headers about form settings but mostly repetitive titles with minimal substantive content about question settings. Does not provide actionable information.",
+      "B": "Mentions form settings but focuses on macros, external system calls, and form-level settings rather than question-specific settings. Limited relevance to the query.",
+      "C": "Directly addresses 'Основные настройки вопросов' (basic question settings) with detailed, step-by-step instructions on how to configure questions, including specific settings like answer identifier and question text. Highly relevant and comprehensive.",
+      "D": "Contains relevant headers and mentions both form settings and question settings, but lacks substantive details. Mostly repetitive titles without actionable content to answer the query.",
+      "E": "Focuses on form-level settings and technical details about optional questions and macros. Minimal relevance to question-specific settings configuration."
+    }
+  },
+  "error": null
+}

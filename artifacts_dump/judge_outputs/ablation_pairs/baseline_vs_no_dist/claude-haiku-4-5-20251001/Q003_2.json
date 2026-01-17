@@ -1,0 +1,22 @@
+{
+  "qid": "Q003",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 2,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671549,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"B\",\n  \"reason\": \"Candidate B directly addresses the query about adding actions to mailing blocks by explaining that blocks of actions are added to mailings using the 'Add block' button and describing how they are connected. Candidate A only discusses ordering messages within a block, which is not relevant to adding actions to blocks.\"\n}\n```",
+  "parsed_json": {
+    "decision": "B",
+    "reason": "Candidate B directly addresses the query about adding actions to mailing blocks by explaining that blocks of actions are added to mailings using the 'Add block' button and describing how they are connected. Candidate A only discusses ordering messages within a block, which is not relevant to adding actions to blocks."
+  },
+  "error": null
+}

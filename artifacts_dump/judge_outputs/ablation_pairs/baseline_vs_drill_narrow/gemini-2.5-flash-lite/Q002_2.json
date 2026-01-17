@@ -1,0 +1,19 @@
+{
+  "qid": "Q002",
+  "judge": {
+    "name": "gemini-2.5-flash-lite",
+    "replica": 2,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671276,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 3
+  },
+  "status": "ERROR",
+  "raw_response_text": "{\n  \"decision\": \"Tie\",\n  \"reason\": \"Кандидат А описывает упорядочивание сообщений внутри блока, что не относится к связям между блоками. Кандидат Б содержит только заголовок, не предоставляя никакой информации по запросу. Оба кандидата не содержат релевантной информации.\"\n}",
+  "parsed_json": null,
+  "error": "'decision' must be 'A', 'B', or ''"
+}

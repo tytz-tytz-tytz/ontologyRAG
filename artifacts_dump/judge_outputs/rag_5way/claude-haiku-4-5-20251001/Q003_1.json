@@ -1,0 +1,63 @@
+{
+  "qid": "Q003",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667873,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 2,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 4,\n    \"E\": 5\n  },\n  \"answerability\": {\n    \"A\": 1,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 3,\n    \"E\": 4\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 3,\n    \"C\": 2,\n    \"D\": 2,\n    \"E\": 1\n  },\n  \"overall\": {\n    \"A\": 1,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 3,\n    \"E\": 4\n  },\n  \"winner\": \"E\",\n  \"ranking\": [\n    \"E\",\n    \"D\",\n    \"C\",\n    \"B\",\n    \"A\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 4,\n  \"rationales\": {\n    \"A\": \"Mostly repetitive headers and fragments about action blocks with minimal substantive content. Does not explain how to add actions to mailing blocks.\",\n    \"B\": \"Contains some relevant information about adding blocks to mailings, but mixes in unrelated content about message ordering, deletion, and statistics. Partially addresses the query.\",\n    \"C\": \"Includes explanation of adding blocks to mailings with the 'Add block' button and dragging to scenario area. However, focuses more on comment blocks than general action blocks, and includes some irrelevant metrics information.\",\n    \"D\": \"Directly explains how action blocks are added to mailings via the 'Add block' button and how they connect with events. Relevant and focused, though some content about button actions is tangential.\",\n    \"E\": \"Comprehensive and well-structured explanation of the mailing scenario setup, including the 'Add block' button mechanism for adding action blocks to mailings. Directly answers the query with clear, organized information and minimal noise.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 2,
+      "B": 3,
+      "C": 3,
+      "D": 4,
+      "E": 5
+    },
+    "answerability": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 3,
+      "E": 4
+    },
+    "noise": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 2,
+      "E": 1
+    },
+    "overall": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 3,
+      "E": 4
+    },
+    "winner": "E",
+    "ranking": [
+      "E",
+      "D",
+      "C",
+      "B",
+      "A"
+    ],
+    "failure_letters": [],
+    "confidence": 4,
+    "rationales": {
+      "A": "Mostly repetitive headers and fragments about action blocks with minimal substantive content. Does not explain how to add actions to mailing blocks.",
+      "B": "Contains some relevant information about adding blocks to mailings, but mixes in unrelated content about message ordering, deletion, and statistics. Partially addresses the query.",
+      "C": "Includes explanation of adding blocks to mailings with the 'Add block' button and dragging to scenario area. However, focuses more on comment blocks than general action blocks, and includes some irrelevant metrics information.",
+      "D": "Directly explains how action blocks are added to mailings via the 'Add block' button and how they connect with events. Relevant and focused, though some content about button actions is tangential.",
+      "E": "Comprehensive and well-structured explanation of the mailing scenario setup, including the 'Add block' button mechanism for adding action blocks to mailings. Directly answers the query with clear, organized information and minimal noise."
+    }
+  },
+  "error": null
+}

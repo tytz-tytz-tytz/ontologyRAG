@@ -1,0 +1,63 @@
+{
+  "qid": "Q010",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667926,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 1,\n    \"B\": 5,\n    \"C\": 4,\n    \"D\": 1,\n    \"E\": 1\n  },\n  \"answerability\": {\n    \"A\": 1,\n    \"B\": 4,\n    \"C\": 3,\n    \"D\": 0,\n    \"E\": 0\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 1,\n    \"C\": 2,\n    \"D\": 5,\n    \"E\": 5\n  },\n  \"overall\": {\n    \"A\": 1,\n    \"B\": 5,\n    \"C\": 3,\n    \"D\": 0,\n    \"E\": 0\n  },\n  \"winner\": \"B\",\n  \"ranking\": [\n    \"B\",\n    \"C\",\n    \"A\",\n    \"D\",\n    \"E\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 5,\n  \"rationales\": {\n    \"A\": \"Mentions landing page creation/settings but is off-topic for widget creation; minimal relevant content.\",\n    \"B\": \"Directly addresses widget creation and configuration with clear step-by-step instructions; highly relevant and comprehensive.\",\n    \"C\": \"Covers widget settings and configuration details but lacks complete creation instructions; partially answers the query.\",\n    \"D\": \"Mostly figure references and repetitive headers with minimal substantive content; high noise, low answerability.\",\n    \"E\": \"Fragmented text with mostly irrelevant headers and filter descriptions; does not support answering the query.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 1,
+      "B": 5,
+      "C": 4,
+      "D": 1,
+      "E": 1
+    },
+    "answerability": {
+      "A": 1,
+      "B": 4,
+      "C": 3,
+      "D": 0,
+      "E": 0
+    },
+    "noise": {
+      "A": 4,
+      "B": 1,
+      "C": 2,
+      "D": 5,
+      "E": 5
+    },
+    "overall": {
+      "A": 1,
+      "B": 5,
+      "C": 3,
+      "D": 0,
+      "E": 0
+    },
+    "winner": "B",
+    "ranking": [
+      "B",
+      "C",
+      "A",
+      "D",
+      "E"
+    ],
+    "failure_letters": [],
+    "confidence": 5,
+    "rationales": {
+      "A": "Mentions landing page creation/settings but is off-topic for widget creation; minimal relevant content.",
+      "B": "Directly addresses widget creation and configuration with clear step-by-step instructions; highly relevant and comprehensive.",
+      "C": "Covers widget settings and configuration details but lacks complete creation instructions; partially answers the query.",
+      "D": "Mostly figure references and repetitive headers with minimal substantive content; high noise, low answerability.",
+      "E": "Fragmented text with mostly irrelevant headers and filter descriptions; does not support answering the query."
+    }
+  },
+  "error": null
+}

@@ -1,45 +1,47 @@
-# src/rag/expand.py
-
-from typing import Dict, Set, List
+from typing import Dict, Set, List, Optional
 import collections
 
 from ..data.models import Edge
 
 
-ALLOWED_RELATIONS = {
-    "HAS_SUBSECTION",
-    "HAS_CHUNK",
-    "HAS_ITEM",
-    "CAPTIONS",
-    "LINKS_TO",
-}
-
-
 class GraphExpander:
     """
-    Ограниченный BFS по онтологическому графу
-    от множества seed-узлов.
+    Bounded BFS expansion over the ontology/graph structure starting from seed nodes.
+
+    The expander:
+    - performs BFS from seed_ids
+    - respects maximum depth and maximum number of visited nodes
+    - optionally filters edges by allowed relation types
     """
 
-    def __init__(self,
-                 graph_adj: Dict[str, List[Edge]],
-                 max_depth: int = 4,
-                 max_nodes: int = 500):
+    def __init__(
+        self,
+        graph_adj: Dict[str, List[Edge]],
+        max_depth: int = 4,
+        max_nodes: int = 500,
+        allowed_relations: Optional[Set[str]] = None,
+    ):
         self.graph_adj = graph_adj
         self.max_depth = max_depth
         self.max_nodes = max_nodes
 
+        # If None or empty, treat it as "no filtering" (allow all relations).
+        self.allowed_relations = set(allowed_relations) if allowed_relations else None
+
     # -------------------------------------------------------------
-    # Основной метод
+    # Main method
     # -------------------------------------------------------------
     def expand(self, seed_ids: List[str]):
         """
-        BFS от seed_ids.
+        Run BFS expansion from the provided seed node IDs.
 
-        Возвращает:
-            all_nodes: Set[node_id]
+        Returns:
+            all_nodes: Set[str]
+                All visited node IDs (including seeds).
             all_edges: List[Edge]
-            dist_to_seed: Dict[node_id, int]
+                All traversed edges included during expansion.
+            dist_to_seed: Dict[str, int]
+                Shortest BFS distance from any seed node to each visited node.
         """
 
         all_nodes: Set[str] = set()
@@ -48,13 +50,13 @@ class GraphExpander:
 
         q = collections.deque()
 
-        # Инициализация очереди
+        # Initialize BFS queue with seeds
         for sid in seed_ids:
             all_nodes.add(sid)
             dist_to_seed[sid] = 0
             q.append((sid, 0))
 
-        # BFS
+        # BFS loop
         while q and len(all_nodes) < self.max_nodes:
             node, depth = q.popleft()
 
@@ -62,17 +64,18 @@ class GraphExpander:
                 continue
 
             for e in self.graph_adj.get(node, []):
-                if e.relation_type not in ALLOWED_RELATIONS:
+                # Relation filtering (if enabled)
+                if self.allowed_relations is not None and e.relation_type not in self.allowed_relations:
                     continue
 
                 tgt = e.to_id
 
-                # Добавляем вершину и ребро
+                # Always keep the edge if we traverse it.
+                # If you want to deduplicate edges, use a set of (from,to,type),
+                # but for retrieval this is usually not critical.
                 all_edges.append(e)
 
-                # Если ты хочешь исключить повторяющиеся ребра — можно делать set,
-                # но для RAG это не критично.
-
+                # Add newly discovered node
                 if tgt not in all_nodes:
                     all_nodes.add(tgt)
                     dist_to_seed[tgt] = depth + 1

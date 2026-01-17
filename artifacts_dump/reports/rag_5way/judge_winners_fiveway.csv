@@ -1,0 +1,11 @@
+qid,query,n_runs,top_winner_method,top_winner_count,top_winner_share,winners_breakdown
+Q001,редактирование существующего события,3,ontology_stable_baseline,3,1.0,ontology_stable_baseline:3
+Q002,связи между блоками рассылки,3,bm25_heuristic,2,0.6666666666666666,bm25_heuristic:2;__TIE_OR_EMPTY__:1
+Q003,добавление действий в блоки рассылки,3,ontology_stable_baseline,2,0.6666666666666666,ontology_stable_baseline:2;__TIE_OR_EMPTY__:1
+Q004,добавление и редактирование медиа групп,3,classic_dense_heuristic,3,1.0,classic_dense_heuristic:3
+Q005,настройки вопросов форм,3,ontology_stable_baseline,3,1.0,ontology_stable_baseline:3
+Q006,условия вопросов в формах,3,classic_dense_heuristic,2,0.6666666666666666,classic_dense_heuristic:2;__TIE_OR_EMPTY__:1
+Q007,макросы в конструкторе рассылок,3,ontology_stable_baseline,3,1.0,ontology_stable_baseline:3
+Q008,настройки SMS провайдера,3,ontology_stable_baseline,3,1.0,ontology_stable_baseline:3
+Q009,ход исполнения рассылок,3,,2,0.6666666666666666,__TIE_OR_EMPTY__:2;bm25_heuristic:1
+Q010,создание и настройки виджета,3,ontology_stable_baseline,3,1.0,ontology_stable_baseline:3

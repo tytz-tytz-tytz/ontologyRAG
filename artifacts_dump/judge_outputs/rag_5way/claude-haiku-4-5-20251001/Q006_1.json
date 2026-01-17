@@ -1,0 +1,63 @@
+{
+  "qid": "Q006",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667897,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 2,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 4,\n    \"E\": 5\n  },\n  \"answerability\": {\n    \"A\": 1,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 4,\n    \"E\": 4\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 1,\n    \"E\": 2\n  },\n  \"overall\": {\n    \"A\": 1,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 4,\n    \"E\": 4\n  },\n  \"winner\": \"\",\n  \"ranking\": [\n    \"D\",\n    \"E\",\n    \"B\",\n    \"C\",\n    \"A\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 4,\n  \"rationales\": {\n    \"A\": \"Contains only section headers and titles with no substantive content about question conditions. Highly noisy with minimal information value.\",\n    \"B\": \"Provides some relevant information about form behavior and question settings, but lacks direct explanation of how to set question conditions. Moderate noise from repetition.\",\n    \"C\": \"Mentions conditional questions and their setup, but contains significant repetition and image references. Partially addresses the query but with noise.\",\n    \"D\": \"Directly explains basic question settings and configuration process with clear step-by-step instructions. Highly relevant and answerable, minimal noise.\",\n    \"E\": \"Directly addresses conditional question settings with concrete examples and limitations. Highly relevant to query about question conditions, though slightly less comprehensive on basic settings than D.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 2,
+      "B": 3,
+      "C": 3,
+      "D": 4,
+      "E": 5
+    },
+    "answerability": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 4,
+      "E": 4
+    },
+    "noise": {
+      "A": 4,
+      "B": 3,
+      "C": 3,
+      "D": 1,
+      "E": 2
+    },
+    "overall": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 4,
+      "E": 4
+    },
+    "winner": "",
+    "ranking": [
+      "D",
+      "E",
+      "B",
+      "C",
+      "A"
+    ],
+    "failure_letters": [],
+    "confidence": 4,
+    "rationales": {
+      "A": "Contains only section headers and titles with no substantive content about question conditions. Highly noisy with minimal information value.",
+      "B": "Provides some relevant information about form behavior and question settings, but lacks direct explanation of how to set question conditions. Moderate noise from repetition.",
+      "C": "Mentions conditional questions and their setup, but contains significant repetition and image references. Partially addresses the query but with noise.",
+      "D": "Directly explains basic question settings and configuration process with clear step-by-step instructions. Highly relevant and answerable, minimal noise.",
+      "E": "Directly addresses conditional question settings with concrete examples and limitations. Highly relevant to query about question conditions, though slightly less comprehensive on basic settings than D."
+    }
+  },
+  "error": null
+}

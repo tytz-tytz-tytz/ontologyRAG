@@ -1,0 +1,63 @@
+{
+  "qid": "Q004",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667881,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 1,\n    \"B\": 4,\n    \"C\": 1,\n    \"D\": 3,\n    \"E\": 3\n  },\n  \"answerability\": {\n    \"A\": 0,\n    \"B\": 3,\n    \"C\": 0,\n    \"D\": 1,\n    \"E\": 1\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 2,\n    \"C\": 3,\n    \"D\": 5,\n    \"E\": 4\n  },\n  \"overall\": {\n    \"A\": 0,\n    \"B\": 3,\n    \"C\": 0,\n    \"D\": 1,\n    \"E\": 1\n  },\n  \"winner\": \"B\",\n  \"ranking\": [\n    \"B\",\n    \"D\",\n    \"E\",\n    \"A\",\n    \"C\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 4,\n  \"rationales\": {\n    \"A\": \"Completely off-topic; discusses event editing, not media groups. No relevant information for the query.\",\n    \"B\": \"Directly addresses media groups with definitions, constraints (max 50 items), and instructions for adding them. Contains actionable information but lacks detailed step-by-step editing procedures.\",\n    \"C\": \"Mostly irrelevant; focuses on event editing and system events with minimal media group content. Does not support the query.\",\n    \"D\": \"Mentions media group addition and editor with figure references, but consists almost entirely of figure captions and repetitions with minimal substantive content.\",\n    \"E\": \"Contains some relevant information about media groups and figures, but mostly figure references and incomplete sentences. Limited practical guidance for adding/editing.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 1,
+      "B": 4,
+      "C": 1,
+      "D": 3,
+      "E": 3
+    },
+    "answerability": {
+      "A": 0,
+      "B": 3,
+      "C": 0,
+      "D": 1,
+      "E": 1
+    },
+    "noise": {
+      "A": 4,
+      "B": 2,
+      "C": 3,
+      "D": 5,
+      "E": 4
+    },
+    "overall": {
+      "A": 0,
+      "B": 3,
+      "C": 0,
+      "D": 1,
+      "E": 1
+    },
+    "winner": "B",
+    "ranking": [
+      "B",
+      "D",
+      "E",
+      "A",
+      "C"
+    ],
+    "failure_letters": [],
+    "confidence": 4,
+    "rationales": {
+      "A": "Completely off-topic; discusses event editing, not media groups. No relevant information for the query.",
+      "B": "Directly addresses media groups with definitions, constraints (max 50 items), and instructions for adding them. Contains actionable information but lacks detailed step-by-step editing procedures.",
+      "C": "Mostly irrelevant; focuses on event editing and system events with minimal media group content. Does not support the query.",
+      "D": "Mentions media group addition and editor with figure references, but consists almost entirely of figure captions and repetitions with minimal substantive content.",
+      "E": "Contains some relevant information about media groups and figures, but mostly figure references and incomplete sentences. Limited practical guidance for adding/editing."
+    }
+  },
+  "error": null
+}

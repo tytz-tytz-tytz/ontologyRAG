@@ -1,0 +1,22 @@
+{
+  "qid": "Q006",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671200,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"B\",\n  \"reason\": \"The user query asks about 'условия вопросов в формах' (conditions of questions in forms). Candidate B directly addresses this topic by explaining how to configure conditions for sending questions to clients, including examples and limitations. Candidate A discusses basic question settings and configuration but does not address conditions for question delivery, which is the core of the query.\"\n}\n```",
+  "parsed_json": {
+    "decision": "B",
+    "reason": "The user query asks about 'условия вопросов в формах' (conditions of questions in forms). Candidate B directly addresses this topic by explaining how to configure conditions for sending questions to clients, including examples and limitations. Candidate A discusses basic question settings and configuration but does not address conditions for question delivery, which is the core of the query."
+  },
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "Q007",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671215,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"B\",\n  \"reason\": \"Context B directly addresses how macros are used in the mailing constructor with practical examples (customer_name, customer_discount) and explains the workflow of creating personalized mailings. Context A provides only technical type definitions of macros without explaining their application in the mailing constructor interface.\"\n}\n```",
+  "parsed_json": {
+    "decision": "B",
+    "reason": "Context B directly addresses how macros are used in the mailing constructor with practical examples (customer_name, customer_discount) and explains the workflow of creating personalized mailings. Context A provides only technical type definitions of macros without explaining their application in the mailing constructor interface."
+  },
+  "error": null
+}

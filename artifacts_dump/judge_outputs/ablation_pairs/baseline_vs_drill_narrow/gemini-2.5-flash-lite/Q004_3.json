@@ -1,0 +1,19 @@
+{
+  "qid": "Q004",
+  "judge": {
+    "name": "gemini-2.5-flash-lite",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671338,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 3
+  },
+  "status": "ERROR",
+  "raw_response_text": "{\"decision\": \"Tie\", \"reason\": \"Both candidates are identical and do not contain information about adding or editing media groups. They only discuss editing events.\"}",
+  "parsed_json": null,
+  "error": "'decision' must be 'A', 'B', or ''"
+}

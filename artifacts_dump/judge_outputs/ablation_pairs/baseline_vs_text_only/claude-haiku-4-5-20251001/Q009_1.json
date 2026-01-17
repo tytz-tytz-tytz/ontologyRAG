@@ -1,0 +1,22 @@
+{
+  "qid": "Q009",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671775,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Candidate A directly addresses the query about 'ход исполнения рассылок' (execution flow of mailings) by explaining the structure and components of a mailing scenario, including the Start event, action blocks, and their connections. Candidate B discusses event auditing and filtering, which is tangential to understanding the execution flow of mailings.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Candidate A directly addresses the query about 'ход исполнения рассылок' (execution flow of mailings) by explaining the structure and components of a mailing scenario, including the Start event, action blocks, and their connections. Candidate B discusses event auditing and filtering, which is tangential to understanding the execution flow of mailings."
+  },
+  "error": null
+}

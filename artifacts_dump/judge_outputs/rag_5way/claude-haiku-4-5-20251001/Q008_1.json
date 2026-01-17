@@ -1,0 +1,63 @@
+{
+  "qid": "Q008",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667912,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 5,\n    \"B\": 4,\n    \"C\": 3,\n    \"D\": 1,\n    \"E\": 2\n  },\n  \"answerability\": {\n    \"A\": 5,\n    \"B\": 4,\n    \"C\": 2,\n    \"D\": 0,\n    \"E\": 1\n  },\n  \"noise\": {\n    \"A\": 1,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 5,\n    \"E\": 4\n  },\n  \"overall\": {\n    \"A\": 5,\n    \"B\": 4,\n    \"C\": 2,\n    \"D\": 0,\n    \"E\": 1\n  },\n  \"winner\": \"A\",\n  \"ranking\": [\n    \"A\",\n    \"B\",\n    \"C\",\n    \"E\",\n    \"D\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 5,\n  \"rationales\": {\n    \"A\": \"Directly addresses SMS provider configuration with specific, actionable steps for 'СМС услуги' provider including login, password/token setup, and API section navigation. Minimal noise, highly relevant and answerable.\",\n    \"B\": \"Covers SMS provider configuration for both 'СМС услуги' and 'SMS.ru' with specific field instructions and API credentials. Some irrelevant content about provider usage in mailings, but core configuration information is present.\",\n    \"C\": \"Discusses SMS provider selection and default settings but lacks specific configuration instructions. Too general and incomplete for answering detailed setup questions.\",\n    \"D\": \"Contains only section headers and titles with heavy repetition. No actual configuration content or instructions provided. Essentially all noise.\",\n    \"E\": \"Mostly section headers and titles with minimal substantive content. Includes a brief definition of SMS provider but lacks configuration details. Heavy repetition and noise.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 5,
+      "B": 4,
+      "C": 3,
+      "D": 1,
+      "E": 2
+    },
+    "answerability": {
+      "A": 5,
+      "B": 4,
+      "C": 2,
+      "D": 0,
+      "E": 1
+    },
+    "noise": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 5,
+      "E": 4
+    },
+    "overall": {
+      "A": 5,
+      "B": 4,
+      "C": 2,
+      "D": 0,
+      "E": 1
+    },
+    "winner": "A",
+    "ranking": [
+      "A",
+      "B",
+      "C",
+      "E",
+      "D"
+    ],
+    "failure_letters": [],
+    "confidence": 5,
+    "rationales": {
+      "A": "Directly addresses SMS provider configuration with specific, actionable steps for 'СМС услуги' provider including login, password/token setup, and API section navigation. Minimal noise, highly relevant and answerable.",
+      "B": "Covers SMS provider configuration for both 'СМС услуги' and 'SMS.ru' with specific field instructions and API credentials. Some irrelevant content about provider usage in mailings, but core configuration information is present.",
+      "C": "Discusses SMS provider selection and default settings but lacks specific configuration instructions. Too general and incomplete for answering detailed setup questions.",
+      "D": "Contains only section headers and titles with heavy repetition. No actual configuration content or instructions provided. Essentially all noise.",
+      "E": "Mostly section headers and titles with minimal substantive content. Includes a brief definition of SMS provider but lacks configuration details. Heavy repetition and noise."
+    }
+  },
+  "error": null
+}

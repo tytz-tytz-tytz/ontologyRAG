@@ -1,0 +1,22 @@
+{
+  "qid": "Q009",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671236,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Context A provides substantive information about how mailing campaigns are structured and executed, including details about scenarios, events, action blocks, and their connections. Context B contains only a section header with no actual content, providing no support for answering the query about the execution flow of mailings.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Context A provides substantive information about how mailing campaigns are structured and executed, including details about scenarios, events, action blocks, and their connections. Context B contains only a section header with no actual content, providing no support for answering the query about the execution flow of mailings."
+  },
+  "error": null
+}

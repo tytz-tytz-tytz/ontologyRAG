@@ -1,0 +1,63 @@
+{
+  "qid": "Q001",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667858,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 5,\n    \"B\": 4,\n    \"C\": 4,\n    \"D\": 2,\n    \"E\": 1\n  },\n  \"answerability\": {\n    \"A\": 5,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 1,\n    \"E\": 0\n  },\n  \"noise\": {\n    \"A\": 0,\n    \"B\": 2,\n    \"C\": 3,\n    \"D\": 4,\n    \"E\": 5\n  },\n  \"overall\": {\n    \"A\": 5,\n    \"B\": 3,\n    \"C\": 2,\n    \"D\": 1,\n    \"E\": 0\n  },\n  \"winner\": \"A\",\n  \"ranking\": [\n    \"A\",\n    \"B\",\n    \"C\",\n    \"D\",\n    \"E\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 5,\n  \"rationales\": {\n    \"A\": \"Directly addresses the query with comprehensive information about editing existing events, including permissions, restrictions, and limitations based on campaign status and macro usage.\",\n    \"B\": \"Contains relevant information about event editing restrictions but is incomplete, missing the introductory context and details about what editing is allowed. Includes irrelevant content about landing pages.\",\n    \"C\": \"Relevant topic but heavily repetitive with duplicate headers and chunk separators. Contains the same key information as A but fragmented and harder to extract a complete answer.\",\n    \"D\": \"Mentions 'Редактирование событий' as a header but provides minimal substantive content about editing; mostly discusses event generation and usage, which is off-topic.\",\n    \"E\": \"Focuses on editing campaign scenarios during active campaigns, not on editing events themselves. Completely misaligned with the query about event editing.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 5,
+      "B": 4,
+      "C": 4,
+      "D": 2,
+      "E": 1
+    },
+    "answerability": {
+      "A": 5,
+      "B": 3,
+      "C": 3,
+      "D": 1,
+      "E": 0
+    },
+    "noise": {
+      "A": 0,
+      "B": 2,
+      "C": 3,
+      "D": 4,
+      "E": 5
+    },
+    "overall": {
+      "A": 5,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "E": 0
+    },
+    "winner": "A",
+    "ranking": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "failure_letters": [],
+    "confidence": 5,
+    "rationales": {
+      "A": "Directly addresses the query with comprehensive information about editing existing events, including permissions, restrictions, and limitations based on campaign status and macro usage.",
+      "B": "Contains relevant information about event editing restrictions but is incomplete, missing the introductory context and details about what editing is allowed. Includes irrelevant content about landing pages.",
+      "C": "Relevant topic but heavily repetitive with duplicate headers and chunk separators. Contains the same key information as A but fragmented and harder to extract a complete answer.",
+      "D": "Mentions 'Редактирование событий' as a header but provides minimal substantive content about editing; mostly discusses event generation and usage, which is off-topic.",
+      "E": "Focuses on editing campaign scenarios during active campaigns, not on editing events themselves. Completely misaligned with the query about event editing."
+    }
+  },
+  "error": null
+}

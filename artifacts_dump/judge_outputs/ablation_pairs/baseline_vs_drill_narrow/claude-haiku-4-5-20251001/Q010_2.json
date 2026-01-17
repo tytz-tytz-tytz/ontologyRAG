@@ -1,0 +1,22 @@
+{
+  "qid": "Q010",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 2,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671246,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Context A directly addresses the user query about creating and configuring widgets, providing specific step-by-step instructions for widget creation. Context B discusses email campaign scenarios and is completely unrelated to widgets.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Context A directly addresses the user query about creating and configuring widgets, providing specific step-by-step instructions for widget creation. Context B discusses email campaign scenarios and is completely unrelated to widgets."
+  },
+  "error": null
+}

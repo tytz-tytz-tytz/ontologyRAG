@@ -1,0 +1,19 @@
+{
+  "qid": "Q002",
+  "judge": {
+    "name": "gpt-4o-mini",
+    "replica": 2,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671417,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 3
+  },
+  "status": "ERROR",
+  "raw_response_text": "{\n  \"decision\": \"Tie\",\n  \"reason\": \"Оба контекста не содержат информации о связях между блоками рассылки. Кандидат A говорит о порядке сообщений, а кандидат B — о запуске рассылок, что не относится к запросу.\"\n}",
+  "parsed_json": null,
+  "error": "'decision' must be 'A', 'B', or ''"
+}

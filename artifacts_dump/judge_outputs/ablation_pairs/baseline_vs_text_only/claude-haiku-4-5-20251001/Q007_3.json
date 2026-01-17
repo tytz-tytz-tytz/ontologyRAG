@@ -1,0 +1,22 @@
+{
+  "qid": "Q007",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671771,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"B\",\n  \"reason\": \"Candidate B directly addresses the query about macros in the mailing constructor by explaining what macros are, providing specific examples (customer_name, customer_discount), and describing how they are used to personalize mailings. Candidate A discusses action blocks and message sending but contains no information about macros.\"\n}\n```",
+  "parsed_json": {
+    "decision": "B",
+    "reason": "Candidate B directly addresses the query about macros in the mailing constructor by explaining what macros are, providing specific examples (customer_name, customer_discount), and describing how they are used to personalize mailings. Candidate A discusses action blocks and message sending but contains no information about macros."
+  },
+  "error": null
+}

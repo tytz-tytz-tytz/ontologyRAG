@@ -1,0 +1,22 @@
+{
+  "qid": "Q002",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 2,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671134,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Context A contains relevant information about organizing messages within a block (блоке), which directly relates to the query about connections/relationships between mailing blocks. Context B only provides a title about launching and stopping mailings without any substantive content about block relationships.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Context A contains relevant information about organizing messages within a block (блоке), which directly relates to the query about connections/relationships between mailing blocks. Context B only provides a title about launching and stopping mailings without any substantive content about block relationships."
+  },
+  "error": null
+}

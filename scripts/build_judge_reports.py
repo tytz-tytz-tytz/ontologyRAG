@@ -2,41 +2,57 @@
 # -*- coding: utf-8 -*-
 
 """
-Build aggregated LLM-as-judge reports.
+Build aggregated LLM-as-judge reports for two modes:
 
-Expected judge outputs layout:
-  artifacts/judge_outputs/<MODEL_OR_ANY_SUBDIR?>/Q001_1.json
-  artifacts/judge_outputs/Q001_2.json
-  ...
-
-We will recursively scan --judge_outputs_dir for *.json and parse:
-- qid and replica from filename: Q###_N.json
-- model from JSON field if present
-
-Judge output schema supported:
-A) Wrapped:
+1) Multi-way (A–E) "rag_5way":
+   Strict schema per run (inside parsed_json / judge_response / flat):
    {
-     "id": "Q002",
-     "replica": 2,
-     "model": "...",
-     "judge_response": { <the strict judge schema> }
+     "relevance": {"A":0..5,...,"E":0..5},
+     "answerability": {...},
+     "noise": {...},
+     "overall": {...},
+     "winner": "A".."E" or "",
+     "ranking": ["A","B","C","D","E"],
+     "failure_letters": ["A"...],
+     "confidence": 0..5,
+     "rationales": {"A":"...",...,"E":"..."}
    }
 
-B) Flat (fallback):
-   { <the strict judge schema>, "id": "Q002", ... }
+2) Pairwise (A/B) "ablation_pairs":
+   Strict schema per run:
+   {
+     "decision": "A"|"B"|"" ,
+     "reason": "..."
+   }
 
-We also scan --judge_payloads_dir for payloads with:
-  {
-    "id": "Q002",
-    "query": "...",
-    "private_mapping": { "A": "OntologyRAG", ... }
-  }
+Key requirement (per user request):
+- The "full list of queries" (expected QIDs) is taken from judge_payloads folder,
+  not inferred from outputs. If a QID exists in payloads but has no outputs, it is
+  treated as a deterministic skipped tie for pairwise (ablation_pairs).
+
+Input directories:
+- --judge_outputs_dir: recursively scanned for Q###_N.json
+- --judge_payloads_dir: recursively scanned for Q###.json payloads
 
 Outputs (CSV):
-- <prefix>_long.csv    : per (qid, replica, letter)
-- <prefix>_runs.csv    : per (qid, replica)
-- <prefix>_summary.csv : per (qid, method) aggregated over replicas (mean + std)
-- <prefix>_winners.csv : per (qid) winner stats over replicas
+- <prefix>_runs.csv:
+    per (qid, model, replica) with decoded winner/decision methods
+- <prefix>_long.csv:
+    only for fiveway: per (qid, model, replica, letter) metrics
+- <prefix>_summary.csv:
+    only for fiveway: per (method) aggregated metrics pooled over runs
+- <prefix>_winners_fiveway.csv:
+    per qid winners distribution across runs
+- <prefix>_winners_pairwise.csv:
+    per qid decision distribution across runs; includes SKIPPED_IDENTICAL if missing outputs
+
+Outputs (Markdown):
+- <prefix>_report.md:
+    compact summary with win-rates and tie/skip rates.
+
+Notes:
+- Comments are in English (as requested).
+- No changes required to build_judge_payloads.py.
 """
 
 from __future__ import annotations
@@ -51,7 +67,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 
-LETTERS = ["A", "B", "C", "D", "E"]
+LETTERS_5 = ["A", "B", "C", "D", "E"]
+LETTERS_2 = ["A", "B"]
 
 
 # ---------------------------
@@ -60,9 +77,18 @@ LETTERS = ["A", "B", "C", "D", "E"]
 
 def safe_int(x: Any, default: Optional[int] = None) -> Optional[int]:
     try:
-        if x is None:
+        if x is None or x == "":
             return default
         return int(x)
+    except Exception:
+        return default
+
+
+def safe_float(x: Any, default: Optional[float] = None) -> Optional[float]:
+    try:
+        if x is None or x == "":
+            return default
+        return float(x)
     except Exception:
         return default
 
@@ -88,6 +114,58 @@ def std(xs: List[float]) -> Optional[float]:
     var = sum((x - m) ** 2 for x in xs) / (len(xs) - 1)
     return math.sqrt(var)
 
+def extract_first_json_object(text: str) -> Optional[Dict[str, Any]]:
+    """
+    Extract the first top-level JSON object from a text blob.
+    Works even if the text contains markdown fences or extra text.
+    """
+    if not text:
+        return None
+
+    # Fast path: try direct parse
+    try:
+        obj = json.loads(text)
+        if isinstance(obj, dict):
+            return obj
+    except Exception:
+        pass
+
+    # Slow path: find first {...} by brace counting
+    s = text
+    start = s.find("{")
+    if start == -1:
+        return None
+
+    depth = 0
+    in_str = False
+    esc = False
+    for i in range(start, len(s)):
+        ch = s[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+
+        if ch == '"':
+            in_str = True
+            continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                candidate = s[start:i+1]
+                try:
+                    obj = json.loads(candidate)
+                    return obj if isinstance(obj, dict) else None
+                except Exception:
+                    return None
+    return None
+
 
 def dump_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: List[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -98,6 +176,12 @@ def dump_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: List[str]) -> N
             w.writerow(r)
 
 
+def dump_md(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        f.write(text)
+
+
 def load_json(path: Path) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     try:
         with path.open("r", encoding="utf-8") as f:
@@ -106,11 +190,17 @@ def load_json(path: Path) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
         return None, f"{type(e).__name__}: {e}"
 
 
+def list_json_files_recursive(root: Path) -> List[Path]:
+    if not root.exists():
+        return []
+    return sorted([p for p in root.rglob("*.json") if p.is_file()])
+
+
 def parse_qid_replica_from_filename(p: Path) -> Tuple[Optional[str], Optional[int]]:
     """
     Supports:
       Q002_2.json -> ("Q002", 2)
-      Q002.json   -> ("Q002", None)  (not recommended but supported)
+      Q002.json   -> ("Q002", None)
     """
     m = re.match(r"^(Q\d{3})(?:_(\d+))?\.json$", p.name)
     if not m:
@@ -120,48 +210,160 @@ def parse_qid_replica_from_filename(p: Path) -> Tuple[Optional[str], Optional[in
     return qid, replica
 
 
-def get_judge_block(raw: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    """
-    Returns (judge_dict, error_string)
-    """
-    if isinstance(raw.get("judge_response"), dict):
-        return raw["judge_response"], None
-    # fallback: maybe stored flat (already strict schema)
-    # minimal check: has required keys
-    required = ["relevance", "answerability", "noise", "overall", "winner", "ranking", "failure_letters", "confidence", "rationales"]
-    if all(k in raw for k in required):
-        return raw, None
-    return None, "missing judge_response (and not a flat strict schema)"
+def _md_table(rows: List[Dict[str, Any]], headers: List[str]) -> str:
+    lines = []
+    lines.append("| " + " | ".join(headers) + " |")
+    lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
+    for r in rows:
+        lines.append("| " + " | ".join(str(r.get(h, "")) for h in headers) + " |")
+    return "\n".join(lines)
 
 
-def normalize_metric_map(d: Any) -> Dict[str, Optional[int]]:
-    """
-    Expect {"A": 0..5, ...}. Returns {letter: int|None}.
-    """
-    out: Dict[str, Optional[int]] = {L: None for L in LETTERS}
-    if not isinstance(d, dict):
-        return out
-    for L in LETTERS:
-        v = d.get(L)
-        out[L] = safe_int(v, None)
-    return out
-
-
-def list_json_files_recursive(root: Path) -> List[Path]:
-    if not root.exists():
-        return []
-    return sorted([p for p in root.rglob("*.json") if p.is_file()])
+def _relpath(root: Path, p: Path) -> str:
+    try:
+        return str(p.resolve().relative_to(root.resolve()))
+    except Exception:
+        return str(p)
 
 
 # ---------------------------
-# Data
+# Payloads (expected QIDs come from here)
 # ---------------------------
 
 @dataclass
 class PayloadInfo:
     qid: str
     query: str
-    mapping: Dict[str, str]  # letter -> method
+    mapping: Dict[str, str]   # letter -> method
+    payload_path: str         # relative to payloads root
+
+
+def load_payloads_recursive(payloads_root: Path) -> Dict[str, PayloadInfo]:
+    """
+    Load payloads recursively. Assumes payload filename is Q###.json.
+    If the same QID appears multiple times (should not for your per-pair folders),
+    the last one wins, but we keep path for reference.
+    """
+    payloads: Dict[str, PayloadInfo] = {}
+    for p in list_json_files_recursive(payloads_root):
+        if not re.match(r"^Q\d{3}\.json$", p.name):
+            continue
+        raw, err = load_json(p)
+        if raw is None:
+            continue
+
+        qid = safe_str(raw.get("id"))
+        if not re.match(r"^Q\d{3}$", qid):
+            continue
+
+        query = safe_str(raw.get("query"))
+        mapping_raw = raw.get("private_mapping") or {}
+        mapping: Dict[str, str] = {}
+        if isinstance(mapping_raw, dict):
+            for k, v in mapping_raw.items():
+                if isinstance(k, str) and k in ("A", "B", "C", "D", "E"):
+                    mapping[k] = safe_str(v)
+
+        payloads[qid] = PayloadInfo(
+            qid=qid,
+            query=query,
+            mapping=mapping,
+            payload_path=_relpath(payloads_root, p),
+        )
+    return payloads
+
+
+def expected_qids_from_payloads(payloads_root: Path) -> List[str]:
+    """
+    Build the expected list of qids strictly from payload files.
+    We sort by numeric Q index.
+    """
+    qids: List[str] = []
+    for p in list_json_files_recursive(payloads_root):
+        m = re.match(r"^(Q\d{3})\.json$", p.name)
+        if m:
+            qids.append(m.group(1))
+    # unique + numeric sort
+    qids = sorted(set(qids), key=lambda q: int(q[1:]))
+    return qids
+
+
+# ---------------------------
+# Judge output parsing
+# ---------------------------
+
+def _get_judge_block(raw: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    """
+    Returns (parsed_judge_dict, error_string)
+
+    Supported runner output:
+      {"status":"OK", "parsed_json": {...}} or status ERROR/DRY_RUN
+
+    Legacy:
+      {"judge_response": {...}}
+
+    Flat schemas:
+      - pairwise: {"decision":..., "reason":...}
+      - fiveway:  has all required keys
+    """
+    if isinstance(raw.get("parsed_json"), dict):
+        return raw["parsed_json"], None
+
+    if isinstance(raw.get("judge_response"), dict):
+        return raw["judge_response"], None
+
+    # Flat fallback
+    if isinstance(raw.get("decision"), str) and isinstance(raw.get("reason"), str):
+        return raw, None
+
+    fiveway_required = [
+        "relevance", "answerability", "noise", "overall",
+        "winner", "ranking", "failure_letters", "confidence", "rationales"
+    ]
+    if all(k in raw for k in fiveway_required):
+        return raw, None
+
+    return None, "missing parsed_json/judge_response (and not a supported flat schema)"
+
+
+def _detect_mode_from_mapping(mapping: Dict[str, str]) -> str:
+    """
+    Determine evaluation mode from payload mapping.
+    - If mapping includes any of C/D/E -> fiveway
+    - Else -> pairwise (your ablations always A/B)
+    """
+    keys = set(mapping.keys())
+    if any(k in keys for k in ("C", "D", "E")):
+        return "fiveway"
+    return "pairwise"
+
+
+def _normalize_metric_map(d: Any, letters: List[str]) -> Dict[str, Optional[int]]:
+    out: Dict[str, Optional[int]] = {L: None for L in letters}
+    if not isinstance(d, dict):
+        return out
+    for L in letters:
+        out[L] = safe_int(d.get(L), None)
+    return out
+
+
+def _validate_fiveway(obj: Dict[str, Any]) -> Optional[str]:
+    required = [
+        "relevance", "answerability", "noise", "overall",
+        "winner", "ranking", "failure_letters", "confidence", "rationales"
+    ]
+    missing = [k for k in required if k not in obj]
+    if missing:
+        return f"missing keys: {missing}"
+    return None
+
+
+def _validate_pairwise(obj: Dict[str, Any]) -> Optional[str]:
+    required = ["decision", "reason"]
+    missing = [k for k in required if k not in obj]
+    if missing:
+        return f"missing keys: {missing}"
+    return None
 
 
 @dataclass
@@ -174,90 +376,56 @@ class RunRecord:
     parse_error: str
 
     query: str
+    mode: str  # "fiveway" | "pairwise"
 
-    # from judge_response
+    # fiveway fields
     relevance: Dict[str, Optional[int]]
     answerability: Dict[str, Optional[int]]
     noise: Dict[str, Optional[int]]
     overall: Dict[str, Optional[int]]
-
     winner_letter: str
     ranking_letters: List[str]
     failure_letters: List[str]
     confidence: Optional[int]
     rationales: Dict[str, str]
 
-    # from payload mapping
+    # pairwise fields
+    decision_letter: str
+    reason: str
+
+    # mapping
     letter_to_method: Dict[str, str]
 
 
-# ---------------------------
-# Build reports
-# ---------------------------
-
-def load_payloads(payload_dir: Path) -> Dict[str, PayloadInfo]:
-    payloads: Dict[str, PayloadInfo] = {}
-    for p in sorted(payload_dir.glob("Q*.json")):
-        raw, err = load_json(p)
-        if raw is None:
-            continue
-        qid = safe_str(raw.get("id"))
-        if not re.match(r"^Q\d{3}$", qid):
-            continue
-        query = safe_str(raw.get("query"))
-        mapping_raw = raw.get("private_mapping") or {}
-        mapping: Dict[str, str] = {}
-        if isinstance(mapping_raw, dict):
-            for L in LETTERS:
-                if L in mapping_raw:
-                    mapping[L] = safe_str(mapping_raw[L])
-        payloads[qid] = PayloadInfo(qid=qid, query=query, mapping=mapping)
-    return payloads
-
-
-def load_runs(judge_outputs_dir: Path, payloads: Dict[str, PayloadInfo]) -> List[RunRecord]:
+def load_runs(judge_outputs_dir: Path, payloads_by_qid: Dict[str, PayloadInfo]) -> List[RunRecord]:
     runs: List[RunRecord] = []
+
     for p in list_json_files_recursive(judge_outputs_dir):
         qid, replica = parse_qid_replica_from_filename(p)
-        if qid is None:
-            continue
 
         raw, err = load_json(p)
+        if qid is None:
+            # Try to recover qid from content.
+            if raw and isinstance(raw.get("qid"), str) and re.match(r"^Q\d{3}$", raw["qid"]):
+                qid = raw["qid"]
+            elif raw and isinstance(raw.get("id"), str) and re.match(r"^Q\d{3}$", raw["id"]):
+                qid = raw["id"]
+            else:
+                continue
+
+        payload = payloads_by_qid.get(qid)
+        mapping = payload.mapping if payload else {}
+        mode = _detect_mode_from_mapping(mapping)
+
+        # Determine model name.
+        model = ""
+        if raw and isinstance(raw.get("judge"), dict):
+            model = safe_str(raw["judge"].get("name"), "")
+        if not model and raw:
+            model = safe_str(raw.get("model") or raw.get("judge_model"), "")
+
+        # JSON load fail.
         if raw is None:
-            # still produce a run row (parse fail)
-            payload = payloads.get(qid)
-            runs.append(
-                RunRecord(
-                    qid=qid,
-                    replica=replica,
-                    model="",
-                    file_path=str(p),
-                    parse_ok=False,
-                    parse_error=err or "unknown json error",
-                    query=payload.query if payload else "",
-                    relevance={L: None for L in LETTERS},
-                    answerability={L: None for L in LETTERS},
-                    noise={L: None for L in LETTERS},
-                    overall={L: None for L in LETTERS},
-                    winner_letter="",
-                    ranking_letters=[],
-                    failure_letters=[],
-                    confidence=None,
-                    rationales={L: "" for L in LETTERS},
-                    letter_to_method=(payload.mapping if payload else {}),
-                )
-            )
-            continue
-
-        payload = payloads.get(qid)
-        judge, jerr = get_judge_block(raw)
-
-        model = safe_str(raw.get("model"), "")
-        # also accept older fields
-        if not model:
-            model = safe_str(raw.get("judge_model"), "")
-
-        if judge is None:
             runs.append(
                 RunRecord(
                     qid=qid,
@@ -265,38 +433,234 @@ def load_runs(judge_outputs_dir: Path, payloads: Dict[str, PayloadInfo]) -> List
                     model=model,
                     file_path=str(p),
                     parse_ok=False,
-                    parse_error=jerr or "unknown schema error",
+                    parse_error=err or "json load error",
                     query=payload.query if payload else "",
-                    relevance={L: None for L in LETTERS},
-                    answerability={L: None for L in LETTERS},
-                    noise={L: None for L in LETTERS},
-                    overall={L: None for L in LETTERS},
+                    mode=mode,
+                    relevance={L: None for L in LETTERS_5},
+                    answerability={L: None for L in LETTERS_5},
+                    noise={L: None for L in LETTERS_5},
+                    overall={L: None for L in LETTERS_5},
                     winner_letter="",
                     ranking_letters=[],
                     failure_letters=[],
                     confidence=None,
-                    rationales={L: "" for L in LETTERS},
-                    letter_to_method=(payload.mapping if payload else {}),
+                    rationales={L: "" for L in LETTERS_5},
+                    decision_letter="",
+                    reason="",
+                    letter_to_method=mapping,
                 )
             )
             continue
 
-        rel = normalize_metric_map(judge.get("relevance"))
-        ans = normalize_metric_map(judge.get("answerability"))
-        noi = normalize_metric_map(judge.get("noise"))
-        ovl = normalize_metric_map(judge.get("overall"))
+        # Treat non-OK runner statuses as parse errors.
+        status = safe_str(raw.get("status"), "")
 
-        winner_letter = safe_str(judge.get("winner"), "")
-        ranking_letters = judge.get("ranking") if isinstance(judge.get("ranking"), list) else []
-        ranking_letters = [safe_str(x) for x in ranking_letters if safe_str(x) in LETTERS]
+        # If runner marked ERROR but we have a usable raw_response_text for pairwise,
+        # salvage it here to avoid re-running the judge.
+        if status and status != "OK":
+            raw_text = safe_str(raw.get("raw_response_text"), "")
+            salvaged = extract_first_json_object(raw_text)
 
-        failure_letters = judge.get("failure_letters") if isinstance(judge.get("failure_letters"), list) else []
-        failure_letters = sorted({safe_str(x) for x in failure_letters if safe_str(x) in LETTERS})
+            if mode == "pairwise" and isinstance(salvaged, dict):
+                decision = safe_str(salvaged.get("decision"), "").strip()
+                reason = safe_str(salvaged.get("reason"), "")
 
-        confidence = safe_int(judge.get("confidence"), None)
+                # Normalize common tie variants produced by some models
+                if decision.lower() in {"tie", "equal", "same", "draw"}:
+                    decision = ""
 
-        rats_raw = judge.get("rationales") if isinstance(judge.get("rationales"), dict) else {}
-        rationales = {L: safe_str(rats_raw.get(L), "") for L in LETTERS}
+                if decision in ("A", "B", "") and reason:
+                    # Treat as parse_ok despite runner ERROR
+                    runs.append(
+                        RunRecord(
+                            qid=qid,
+                            replica=replica,
+                            model=model,
+                            file_path=str(p),
+                            parse_ok=True,
+                            parse_error="SALVAGED_FROM_ERROR",
+                            query=payload.query if payload else "",
+                            mode=mode,
+                            relevance={L: None for L in LETTERS_5},
+                            answerability={L: None for L in LETTERS_5},
+                            noise={L: None for L in LETTERS_5},
+                            overall={L: None for L in LETTERS_5},
+                            winner_letter="",
+                            ranking_letters=[],
+                            failure_letters=[],
+                            confidence=None,
+                            rationales={L: "" for L in LETTERS_5},
+                            decision_letter=decision,
+                            reason=reason,
+                            letter_to_method=mapping,
+                        )
+                    )
+                    continue
+
+            # Default: keep as error
+            runs.append(
+                RunRecord(
+                    qid=qid,
+                    replica=replica,
+                    model=model,
+                    file_path=str(p),
+                    parse_ok=False,
+                    parse_error=safe_str(raw.get("error")) or f"status={status}",
+                    query=payload.query if payload else "",
+                    mode=mode,
+                    relevance={L: None for L in LETTERS_5},
+                    answerability={L: None for L in LETTERS_5},
+                    noise={L: None for L in LETTERS_5},
+                    overall={L: None for L in LETTERS_5},
+                    winner_letter="",
+                    ranking_letters=[],
+                    failure_letters=[],
+                    confidence=None,
+                    rationales={L: "" for L in LETTERS_5},
+                    decision_letter="",
+                    reason="",
+                    letter_to_method=mapping,
+                )
+            )
+            continue
+
+
+        judge_block, jerr = _get_judge_block(raw)
+        if judge_block is None:
+            runs.append(
+                RunRecord(
+                    qid=qid,
+                    replica=replica,
+                    model=model,
+                    file_path=str(p),
+                    parse_ok=False,
+                    parse_error=jerr or "schema not found",
+                    query=payload.query if payload else "",
+                    mode=mode,
+                    relevance={L: None for L in LETTERS_5},
+                    answerability={L: None for L in LETTERS_5},
+                    noise={L: None for L in LETTERS_5},
+                    overall={L: None for L in LETTERS_5},
+                    winner_letter="",
+                    ranking_letters=[],
+                    failure_letters=[],
+                    confidence=None,
+                    rationales={L: "" for L in LETTERS_5},
+                    decision_letter="",
+                    reason="",
+                    letter_to_method=mapping,
+                )
+            )
+            continue
+
+        if mode == "pairwise":
+            verr = _validate_pairwise(judge_block)
+            if verr:
+                runs.append(
+                    RunRecord(
+                        qid=qid,
+                        replica=replica,
+                        model=model,
+                        file_path=str(p),
+                        parse_ok=False,
+                        parse_error=verr,
+                        query=payload.query if payload else "",
+                        mode=mode,
+                        relevance={L: None for L in LETTERS_5},
+                        answerability={L: None for L in LETTERS_5},
+                        noise={L: None for L in LETTERS_5},
+                        overall={L: None for L in LETTERS_5},
+                        winner_letter="",
+                        ranking_letters=[],
+                        failure_letters=[],
+                        confidence=None,
+                        rationales={L: "" for L in LETTERS_5},
+                        decision_letter="",
+                        reason="",
+                        letter_to_method=mapping,
+                    )
+                )
+                continue
+
+            decision = safe_str(judge_block.get("decision"), "")
+            if decision not in ("A", "B", ""):
+                decision = ""
+            reason = safe_str(judge_block.get("reason"), "")
+
+            runs.append(
+                RunRecord(
+                    qid=qid,
+                    replica=replica,
+                    model=model,
+                    file_path=str(p),
+                    parse_ok=True,
+                    parse_error="",
+                    query=payload.query if payload else "",
+                    mode=mode,
+                    relevance={L: None for L in LETTERS_5},
+                    answerability={L: None for L in LETTERS_5},
+                    noise={L: None for L in LETTERS_5},
+                    overall={L: None for L in LETTERS_5},
+                    winner_letter="",
+                    ranking_letters=[],
+                    failure_letters=[],
+                    confidence=None,
+                    rationales={L: "" for L in LETTERS_5},
+                    decision_letter=decision,
+                    reason=reason,
+                    letter_to_method=mapping,
+                )
+            )
+            continue
+
+        # fiveway mode
+        verr = _validate_fiveway(judge_block)
+        if verr:
+            runs.append(
+                RunRecord(
+                    qid=qid,
+                    replica=replica,
+                    model=model,
+                    file_path=str(p),
+                    parse_ok=False,
+                    parse_error=verr,
+                    query=payload.query if payload else "",
+                    mode=mode,
+                    relevance={L: None for L in LETTERS_5},
+                    answerability={L: None for L in LETTERS_5},
+                    noise={L: None for L in LETTERS_5},
+                    overall={L: None for L in LETTERS_5},
+                    winner_letter="",
+                    ranking_letters=[],
+                    failure_letters=[],
+                    confidence=None,
+                    rationales={L: "" for L in LETTERS_5},
+                    decision_letter="",
+                    reason="",
+                    letter_to_method=mapping,
+                )
+            )
+            continue
+
+        rel = _normalize_metric_map(judge_block.get("relevance"), LETTERS_5)
+        ans = _normalize_metric_map(judge_block.get("answerability"), LETTERS_5)
+        noi = _normalize_metric_map(judge_block.get("noise"), LETTERS_5)
+        ovl = _normalize_metric_map(judge_block.get("overall"), LETTERS_5)
+
+        winner_letter = safe_str(judge_block.get("winner"), "")
+        if winner_letter not in LETTERS_5:
+            winner_letter = ""
+
+        ranking_letters = judge_block.get("ranking") if isinstance(judge_block.get("ranking"), list) else []
+        ranking_letters = [safe_str(x) for x in ranking_letters if safe_str(x) in LETTERS_5]
+
+        failure_letters = judge_block.get("failure_letters") if isinstance(judge_block.get("failure_letters"), list) else []
+        failure_letters = sorted({safe_str(x) for x in failure_letters if safe_str(x) in LETTERS_5})
+
+        confidence = safe_int(judge_block.get("confidence"), None)
+
+        rats_raw = judge_block.get("rationales") if isinstance(judge_block.get("rationales"), dict) else {}
+        rationales = {L: safe_str(rats_raw.get(L), "") for L in LETTERS_5}
 
         runs.append(
             RunRecord(
@@ -307,31 +671,84 @@ def load_runs(judge_outputs_dir: Path, payloads: Dict[str, PayloadInfo]) -> List
                 parse_ok=True,
                 parse_error="",
                 query=payload.query if payload else "",
+                mode=mode,
                 relevance=rel,
                 answerability=ans,
                 noise=noi,
                 overall=ovl,
-                winner_letter=winner_letter if winner_letter in LETTERS else "",
+                winner_letter=winner_letter,
                 ranking_letters=ranking_letters,
                 failure_letters=failure_letters,
                 confidence=confidence,
                 rationales=rationales,
-                letter_to_method=(payload.mapping if payload else {}),
+                decision_letter="",
+                reason="",
+                letter_to_method=mapping,
             )
         )
 
-    # stable ordering: qid then replica (None last)
-    def key(r: RunRecord):
+    def _sort_key(r: RunRecord) -> Tuple[Any, Any, Any, Any]:
         rep = r.replica if r.replica is not None else 10**9
-        return (r.qid, rep, r.file_path)
+        return (r.qid, r.model, rep, r.file_path)
 
-    return sorted(runs, key=key)
+    return sorted(runs, key=_sort_key)
 
 
-def build_long_rows(runs: List[RunRecord]) -> List[Dict[str, Any]]:
+# ---------------------------
+# Rows building
+# ---------------------------
+
+def build_runs_rows(runs: List[RunRecord]) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for r in runs:
-        for L in LETTERS:
+        row = {
+            "qid": r.qid,
+            "replica": r.replica if r.replica is not None else "",
+            "model": r.model,
+            "query": r.query,
+            "mode": r.mode,
+            "parse_ok": int(r.parse_ok),
+            "parse_error": r.parse_error,
+            "source_file": r.file_path,
+        }
+
+        if r.mode == "pairwise":
+            decision_method = r.letter_to_method.get(r.decision_letter, "") if r.decision_letter else ""
+            row.update(
+                {
+                    "decision_letter": r.decision_letter,
+                    "decision_method": decision_method,
+                    "reason": r.reason,
+                }
+            )
+        else:
+            winner_method = r.letter_to_method.get(r.winner_letter, "") if r.winner_letter else ""
+            ranking_methods = [r.letter_to_method.get(L, "") for L in r.ranking_letters]
+            row.update(
+                {
+                    "winner_letter": r.winner_letter,
+                    "winner_method": winner_method,
+                    "confidence": r.confidence,
+                    "failure_letters": ",".join(r.failure_letters),
+                    "ranking_letters": ",".join(r.ranking_letters),
+                    "ranking_methods": ",".join(ranking_methods),
+                    "overall_A": r.overall.get("A"),
+                    "overall_B": r.overall.get("B"),
+                    "overall_C": r.overall.get("C"),
+                    "overall_D": r.overall.get("D"),
+                    "overall_E": r.overall.get("E"),
+                }
+            )
+        rows.append(row)
+    return rows
+
+
+def build_long_rows_fiveway(runs: List[RunRecord]) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    for r in runs:
+        if r.mode != "fiveway":
+            continue
+        for L in LETTERS_5:
             method = r.letter_to_method.get(L, "")
             rows.append(
                 {
@@ -355,74 +772,36 @@ def build_long_rows(runs: List[RunRecord]) -> List[Dict[str, Any]]:
     return rows
 
 
-def build_runs_rows(runs: List[RunRecord]) -> List[Dict[str, Any]]:
-    rows: List[Dict[str, Any]] = []
-    for r in runs:
-        # Map winner/ranking to methods via payload mapping
-        winner_method = r.letter_to_method.get(r.winner_letter, "") if r.winner_letter else ""
-        ranking_methods = [r.letter_to_method.get(L, "") for L in r.ranking_letters]
-        rows.append(
-            {
-                "qid": r.qid,
-                "replica": r.replica if r.replica is not None else "",
-                "model": r.model,
-                "query": r.query,
-                "parse_ok": int(r.parse_ok),
-                "parse_error": r.parse_error,
-                "winner_letter": r.winner_letter,
-                "winner_method": winner_method,
-                "confidence": r.confidence,
-                "failure_letters": ",".join(r.failure_letters),
-                "ranking_letters": ",".join(r.ranking_letters),
-                "ranking_methods": ",".join(ranking_methods),
-                # helpful: overall per letter
-                "overall_A": r.overall.get("A"),
-                "overall_B": r.overall.get("B"),
-                "overall_C": r.overall.get("C"),
-                "overall_D": r.overall.get("D"),
-                "overall_E": r.overall.get("E"),
-                "source_file": r.file_path,
-            }
-        )
-    return rows
-
-
-def build_summary_rows(long_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def build_summary_rows_fiveway(long_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
-    Aggregate over replicas for each (qid, method).
-    We only use rows with parse_ok=1 and with non-empty method.
+    Pooled aggregation for fiveway: per method compute mean/std across all run rows.
     """
-    # bucket: (qid, method) -> metric lists
-    bucket: Dict[Tuple[str, str], Dict[str, List[float]]] = {}
-    query_by_qid: Dict[str, str] = {}
+    bucket: Dict[str, Dict[str, List[float]]] = {}
 
     for row in long_rows:
-        qid = safe_str(row.get("qid"))
-        query_by_qid[qid] = safe_str(row.get("query"))
         if safe_int(row.get("parse_ok"), 0) != 1:
             continue
         method = safe_str(row.get("method"))
         if not method:
             continue
-        key = (qid, method)
-        bucket.setdefault(key, {"relevance": [], "answerability": [], "noise": [], "overall": []})
+        bucket.setdefault(method, {"relevance": [], "answerability": [], "noise": [], "overall": []})
         for m in ["relevance", "answerability", "noise", "overall"]:
-            v = row.get(m)
-            if v is None or v == "":
+            v = safe_float(row.get(m), None)
+            if v is None:
                 continue
-            try:
-                bucket[key][m].append(float(v))
-            except Exception:
-                pass
+            bucket[method][m].append(v)
 
-    rows: List[Dict[str, Any]] = []
-    for (qid, method), metrics in sorted(bucket.items()):
-        rows.append(
+    out: List[Dict[str, Any]] = []
+    for method, metrics in sorted(bucket.items(), key=lambda kv: kv[0]):
+        out.append(
             {
-                "qid": qid,
-                "query": query_by_qid.get(qid, ""),
                 "method": method,
-                "n": max(len(metrics["overall"]), len(metrics["relevance"]), len(metrics["answerability"]), len(metrics["noise"])),
+                "n": max(
+                    len(metrics["overall"]),
+                    len(metrics["relevance"]),
+                    len(metrics["answerability"]),
+                    len(metrics["noise"]),
+                ),
                 "relevance_mean": mean(metrics["relevance"]),
                 "relevance_std": std(metrics["relevance"]),
                 "answerability_mean": mean(metrics["answerability"]),
@@ -433,20 +812,21 @@ def build_summary_rows(long_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "overall_std": std(metrics["overall"]),
             }
         )
-    return rows
+    return out
 
 
-def build_winners_rows(runs_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def winners_fiveway_per_qid(runs_rows: List[Dict[str, Any]], expected_qids: List[str]) -> List[Dict[str, Any]]:
     """
-    Winner distribution per qid (across replicas).
-    Uses winner_method when available; counts ties as empty winner_letter (winner_method empty).
+    Per-qid winner distribution across runs (fiveway).
+    Only includes qids that exist in expected_qids.
     """
-    # qid -> method -> count
     counts: Dict[str, Dict[str, int]] = {}
     totals: Dict[str, int] = {}
     queries: Dict[str, str] = {}
 
     for rr in runs_rows:
+        if safe_str(rr.get("mode")) != "fiveway":
+            continue
         qid = safe_str(rr.get("qid"))
         queries[qid] = safe_str(rr.get("query"))
         if safe_int(rr.get("parse_ok"), 0) != 1:
@@ -459,9 +839,11 @@ def build_winners_rows(runs_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         counts[qid][m] = counts[qid].get(m, 0) + 1
 
     rows: List[Dict[str, Any]] = []
-    for qid in sorted(totals.keys()):
-        total = totals[qid]
-        # build a compact representation
+    for qid in expected_qids:
+        total = totals.get(qid, 0)
+        if total == 0:
+            # For fiveway, missing outputs is not assumed to be a tie.
+            continue
         items = sorted(counts.get(qid, {}).items(), key=lambda kv: (-kv[1], kv[0]))
         top_method, top_count = items[0] if items else ("", 0)
         rows.append(
@@ -476,6 +858,202 @@ def build_winners_rows(runs_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             }
         )
     return rows
+
+
+def winners_pairwise_per_qid_with_skips(
+    runs_rows: List[Dict[str, Any]],
+    expected_qids: List[str],
+) -> List[Dict[str, Any]]:
+    """
+    Per-qid decision distribution across runs (pairwise).
+
+    If a qid exists in expected_qids but has 0 judge runs (because you skipped identical contexts),
+    we explicitly mark it as a deterministic skip tie: __SKIPPED_IDENTICAL__:1
+
+    This meets your requirement: "if payload exists but outputs missing => winner doesn't exist => 1:1".
+    """
+    counts: Dict[str, Dict[str, int]] = {}
+    totals: Dict[str, int] = {}
+    queries: Dict[str, str] = {}
+
+    for rr in runs_rows:
+        if safe_str(rr.get("mode")) != "pairwise":
+            continue
+        qid = safe_str(rr.get("qid"))
+        queries[qid] = safe_str(rr.get("query"))
+        if safe_int(rr.get("parse_ok"), 0) != 1:
+            continue
+
+        totals[qid] = totals.get(qid, 0) + 1
+        m = safe_str(rr.get("decision_method"))
+        if not m:
+            m = "__TIE_OR_EMPTY__"
+        counts.setdefault(qid, {})
+        counts[qid][m] = counts[qid].get(m, 0) + 1
+
+    rows: List[Dict[str, Any]] = []
+    for qid in expected_qids:
+        total = totals.get(qid, 0)
+        if total == 0:
+            rows.append(
+                {
+                    "qid": qid,
+                    "query": queries.get(qid, ""),
+                    "n_runs": 0,
+                    "top_decision_method": "",
+                    "top_decision_count": 0,
+                    "top_decision_share": 1.0,
+                    "decisions_breakdown": "__SKIPPED_IDENTICAL__:1",
+                }
+            )
+            continue
+
+        items = sorted(counts.get(qid, {}).items(), key=lambda kv: (-kv[1], kv[0]))
+        top_method, top_count = items[0] if items else ("", 0)
+
+        rows.append(
+            {
+                "qid": qid,
+                "query": queries.get(qid, ""),
+                "n_runs": total,
+                "top_decision_method": "" if top_method == "__TIE_OR_EMPTY__" else top_method,
+                "top_decision_count": top_count,
+                "top_decision_share": (top_count / total) if total else None,
+                "decisions_breakdown": ";".join([f"{k}:{v}" for k, v in items]),
+            }
+        )
+    return rows
+
+
+# ---------------------------
+# Markdown report
+# ---------------------------
+
+def build_md_report(
+    runs: List[RunRecord],
+    runs_rows: List[Dict[str, Any]],
+    summary_fiveway: List[Dict[str, Any]],
+    winners_fiveway: List[Dict[str, Any]],
+    winners_pairwise: List[Dict[str, Any]],
+) -> str:
+    total = len(runs)
+    ok = sum(1 for r in runs if r.parse_ok)
+    bad = total - ok
+
+    fiveway_runs = [r for r in runs if r.mode == "fiveway"]
+    pairwise_runs = [r for r in runs if r.mode == "pairwise"]
+
+    md: List[str] = []
+    md.append("# LLM-as-Judge report")
+    md.append("")
+    md.append(f"- Total run files scanned: **{total}**")
+    md.append(f"- Parsed OK: **{ok}**")
+    md.append(f"- Parsed ERROR: **{bad}**")
+    md.append(f"- Fiveway runs (files): **{len(fiveway_runs)}**")
+    md.append(f"- Pairwise runs (files): **{len(pairwise_runs)}**")
+    md.append("")
+
+    # Pairwise summary: win rates + tie/skip rates across all OK runs
+    if pairwise_runs:
+        counts: Dict[str, int] = {}
+        total_ok = 0
+        ties = 0
+        for rr in runs_rows:
+            if safe_str(rr.get("mode")) != "pairwise":
+                continue
+            if safe_int(rr.get("parse_ok"), 0) != 1:
+                continue
+            total_ok += 1
+            m = safe_str(rr.get("decision_method"))
+            if not m:
+                ties += 1
+                continue
+            counts[m] = counts.get(m, 0) + 1
+
+        rows = []
+        for m, c in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+            rows.append({"method": m, "wins": c, "win_rate": round(c / total_ok, 4) if total_ok else 0})
+
+        skipped = sum(1 for w in winners_pairwise if safe_str(w.get("decisions_breakdown")) == "__SKIPPED_IDENTICAL__:1")
+
+        md.append("## Pairwise summary (A/B)")
+        md.append("")
+        md.append(f"- Total OK pairwise runs: **{total_ok}**")
+        md.append(f"- Tie/empty decisions (from runs): **{ties}** ({round(ties/total_ok, 4) if total_ok else 0})")
+        md.append(f"- Skipped identical payloads (no runs): **{skipped}**")
+        md.append("")
+        if rows:
+            md.append(_md_table(rows, ["method", "wins", "win_rate"]))
+        else:
+            md.append("_No non-tie pairwise decisions._")
+        md.append("")
+        md.append("### Pairwise per-query breakdown (includes SKIPPED_IDENTICAL)")
+        md.append("")
+        md.append(_md_table(
+            winners_pairwise,
+            ["qid", "top_decision_method", "top_decision_share", "decisions_breakdown"]
+        ))
+        md.append("")
+
+    # Fiveway summary: winners + overall metrics
+    if fiveway_runs:
+        counts: Dict[str, int] = {}
+        total_ok = 0
+        ties = 0
+        for rr in runs_rows:
+            if safe_str(rr.get("mode")) != "fiveway":
+                continue
+            if safe_int(rr.get("parse_ok"), 0) != 1:
+                continue
+            total_ok += 1
+            m = safe_str(rr.get("winner_method"))
+            if not m:
+                ties += 1
+                continue
+            counts[m] = counts.get(m, 0) + 1
+
+        rows = []
+        for m, c in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+            rows.append({"method": m, "wins": c, "win_rate": round(c / total_ok, 4) if total_ok else 0})
+
+        md.append("## Fiveway summary (A–E)")
+        md.append("")
+        md.append(f"- Total OK fiveway runs: **{total_ok}**")
+        md.append(f"- Tie/empty winners: **{ties}** ({round(ties/total_ok, 4) if total_ok else 0})")
+        md.append("")
+        if rows:
+            md.append(_md_table(rows, ["method", "wins", "win_rate"]))
+        else:
+            md.append("_No non-tie fiveway winners._")
+        md.append("")
+        md.append("### Fiveway overall metric summary (pooled over runs)")
+        md.append("")
+        if summary_fiveway:
+            md.append(_md_table(
+                summary_fiveway,
+                [
+                    "method", "n",
+                    "relevance_mean", "relevance_std",
+                    "answerability_mean", "answerability_std",
+                    "noise_mean", "noise_std",
+                    "overall_mean", "overall_std",
+                ],
+            ))
+        else:
+            md.append("_No fiveway summary data._")
+        md.append("")
+        md.append("### Fiveway per-query winner breakdown")
+        md.append("")
+        if winners_fiveway:
+            md.append(_md_table(
+                winners_fiveway,
+                ["qid", "top_winner_method", "top_winner_share", "winners_breakdown"]
+            ))
+        else:
+            md.append("_No fiveway per-query data._")
+        md.append("")
+
+    return "\n".join(md)
 
 
 # ---------------------------
@@ -496,15 +1074,35 @@ def main() -> None:
     reports_dir = Path(args.reports_dir)
     prefix = args.prefix
 
-    payloads = load_payloads(judge_payloads_dir)
-    runs = load_runs(judge_outputs_dir, payloads)
+    # Expected QIDs must come from payloads (per user requirement).
+    expected_qids = expected_qids_from_payloads(judge_payloads_dir)
 
-    long_rows = build_long_rows(runs)
+    # Payloads mapping + query text, used for decoding.
+    payloads_by_qid = load_payloads_recursive(judge_payloads_dir)
+
+    runs = load_runs(judge_outputs_dir, payloads_by_qid)
     runs_rows = build_runs_rows(runs)
-    summary_rows = build_summary_rows(long_rows)
-    winners_rows = build_winners_rows(runs_rows)
+    long_rows = build_long_rows_fiveway(runs)
+    summary_rows = build_summary_rows_fiveway(long_rows)
+
+    winners_fiveway = winners_fiveway_per_qid(runs_rows, expected_qids)
+    winners_pairwise = winners_pairwise_per_qid_with_skips(runs_rows, expected_qids)
 
     # Write CSVs
+    dump_csv(
+        reports_dir / f"{prefix}_runs.csv",
+        runs_rows,
+        [
+            "qid", "replica", "model", "query", "mode",
+            "parse_ok", "parse_error",
+            "winner_letter", "winner_method", "confidence",
+            "failure_letters", "ranking_letters", "ranking_methods",
+            "overall_A", "overall_B", "overall_C", "overall_D", "overall_E",
+            "decision_letter", "decision_method", "reason",
+            "source_file",
+        ],
+    )
+
     dump_csv(
         reports_dir / f"{prefix}_long.csv",
         long_rows,
@@ -517,23 +1115,10 @@ def main() -> None:
     )
 
     dump_csv(
-        reports_dir / f"{prefix}_runs.csv",
-        runs_rows,
-        [
-            "qid", "replica", "model", "query",
-            "parse_ok", "parse_error",
-            "winner_letter", "winner_method", "confidence",
-            "failure_letters", "ranking_letters", "ranking_methods",
-            "overall_A", "overall_B", "overall_C", "overall_D", "overall_E",
-            "source_file",
-        ],
-    )
-
-    dump_csv(
         reports_dir / f"{prefix}_summary.csv",
         summary_rows,
         [
-            "qid", "query", "method", "n",
+            "method", "n",
             "relevance_mean", "relevance_std",
             "answerability_mean", "answerability_std",
             "noise_mean", "noise_std",
@@ -542,8 +1127,8 @@ def main() -> None:
     )
 
     dump_csv(
-        reports_dir / f"{prefix}_winners.csv",
-        winners_rows,
+        reports_dir / f"{prefix}_winners_fiveway.csv",
+        winners_fiveway,
         [
             "qid", "query", "n_runs",
             "top_winner_method", "top_winner_count", "top_winner_share",
@@ -551,11 +1136,33 @@ def main() -> None:
         ],
     )
 
+    dump_csv(
+        reports_dir / f"{prefix}_winners_pairwise.csv",
+        winners_pairwise,
+        [
+            "qid", "query", "n_runs",
+            "top_decision_method", "top_decision_count", "top_decision_share",
+            "decisions_breakdown",
+        ],
+    )
+
+    # Markdown report
+    md_text = build_md_report(
+        runs=runs,
+        runs_rows=runs_rows,
+        summary_fiveway=summary_rows,
+        winners_fiveway=winners_fiveway,
+        winners_pairwise=winners_pairwise,
+    )
+    dump_md(reports_dir / f"{prefix}_report.md", md_text)
+
     print(f"Wrote reports to: {reports_dir.resolve()}")
-    print(f" - {prefix}_long.csv")
     print(f" - {prefix}_runs.csv")
+    print(f" - {prefix}_long.csv")
     print(f" - {prefix}_summary.csv")
-    print(f" - {prefix}_winners.csv")
+    print(f" - {prefix}_winners_fiveway.csv")
+    print(f" - {prefix}_winners_pairwise.csv")
+    print(f" - {prefix}_report.md")
 
 
 if __name__ == "__main__":

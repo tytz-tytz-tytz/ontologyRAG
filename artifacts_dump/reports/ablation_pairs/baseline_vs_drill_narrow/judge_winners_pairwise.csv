@@ -1,0 +1,11 @@
+qid,query,n_runs,top_decision_method,top_decision_count,top_decision_share,decisions_breakdown
+Q001,редактирование существующего события,9,stable_baseline,9,1.0,stable_baseline:9
+Q002,связи между блоками рассылки,9,,5,0.5555555555555556,__TIE_OR_EMPTY__:5;stable_baseline:4
+Q003,добавление действий в блоки рассылки,9,,6,0.6666666666666666,__TIE_OR_EMPTY__:6;stable_drill_narrow:3
+Q004,добавление и редактирование медиа групп,9,,9,1.0,__TIE_OR_EMPTY__:9
+Q005,,0,,0,1.0,__SKIPPED_IDENTICAL__:1
+Q006,условия вопросов в формах,9,stable_drill_narrow,9,1.0,stable_drill_narrow:9
+Q007,макросы в конструкторе рассылок,9,stable_baseline,9,1.0,stable_baseline:9
+Q008,,0,,0,1.0,__SKIPPED_IDENTICAL__:1
+Q009,ход исполнения рассылок,9,stable_baseline,9,1.0,stable_baseline:9
+Q010,создание и настройки виджета,9,stable_baseline,9,1.0,stable_baseline:9

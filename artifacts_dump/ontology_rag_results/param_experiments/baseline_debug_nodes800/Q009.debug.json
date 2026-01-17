@@ -1,0 +1,270 @@
+{
+  "query": "ход исполнения рассылок",
+  "drill": {
+    "config": {
+      "top_r": 3,
+      "top_k": 2,
+      "tau_local": 0.35,
+      "tau_child": 0.45,
+      "margin": 0.05
+    },
+    "seed_count": 3,
+    "seed_ids": [
+      "section_ch0113",
+      "section_ch0834",
+      "section_ch1620"
+    ],
+    "seed_levels": [
+      1,
+      1,
+      1
+    ],
+    "seed_local_sim_stats": {
+      "min": 0.5687557458877563,
+      "max": 0.763608992099762,
+      "mean": 0.6343955794970194
+    },
+    "seed_subtree_sim_stats": {
+      "min": 0.5401031970977783,
+      "max": 0.5808045864105225,
+      "mean": 0.5632211764653524
+    }
+  },
+  "expand": {
+    "config": {
+      "max_depth": 3,
+      "max_nodes": 800,
+      "allowed_relations": [
+        "CAPTIONS",
+        "HAS_CHUNK",
+        "HAS_ITEM",
+        "HAS_SUBSECTION",
+        "LINKS_TO"
+      ]
+    },
+    "expanded_node_count": 641,
+    "expanded_edge_count": 638,
+    "dist_stats": {
+      "min": 0,
+      "max": 3,
+      "mean": 2.2589703588143526
+    },
+    "edge_type_counts": {
+      "HAS_CHUNK": 414,
+      "HAS_SUBSECTION": 18,
+      "HAS_ITEM": 126,
+      "CAPTIONS": 80
+    }
+  },
+  "score": {
+    "config": {
+      "mode": "full",
+      "w_text": 1.0,
+      "w_type": 0.3,
+      "w_level": 0.15,
+      "w_dist": 0.2,
+      "type_bonus": {
+        "list_item": 1.0,
+        "chunk": 0.6,
+        "section_title": 0.8,
+        "caption": 0.2
+      },
+      "level_bonus": {
+        "1": 0.1,
+        "2": 0.2,
+        "3": 0.3
+      }
+    },
+    "top_nodes": [
+      {
+        "node_id": "chunk_ch0113",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7821604013442993,
+        "score": 0.7771604013442992,
+        "text_preview": "Настройка сценария рассылки"
+      },
+      {
+        "node_id": "chunk_ch0834",
+        "section_id": "section_ch0834",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.763608992099762,
+        "score": 0.7586089920997618,
+        "text_preview": "Запуск, перезапуск и остановка рассылок"
+      },
+      {
+        "node_id": "chunk_ch0115",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7460193634033203,
+        "score": 0.7410193634033202,
+        "text_preview": "Сценарий рассылки состоит из:"
+      },
+      {
+        "node_id": "chunk_ch1762",
+        "section_id": "section_ch1762",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.9224387407302856,
+        "score": 0.7324387407302856,
+        "text_preview": "Просмотр хода выполнения рассылок"
+      },
+      {
+        "node_id": "chunk_ch1703",
+        "section_id": "section_ch1624",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.9224387407302856,
+        "score": 0.7324387407302856,
+        "text_preview": "Просмотр хода выполнения рассылок"
+      },
+      {
+        "node_id": "chunk_ch0230",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7876577973365784,
+        "score": 0.5976577973365783,
+        "text_preview": "Отписка от рассылок"
+      },
+      {
+        "node_id": "chunk_ch1744",
+        "section_id": "section_ch1737",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7601526975631714,
+        "score": 0.5701526975631713,
+        "text_preview": "Состояние рассылки Текущее состояние рассылки."
+      },
+      {
+        "node_id": "chunk_ch0120",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5739303231239319,
+        "score": 0.5689303231239318,
+        "text_preview": "В простейшем случае сценарий рассылки представляет собой событие Start, связанное с одним блоком действий (см. Рисунок 19)."
+      },
+      {
+        "node_id": "chunk_ch1620",
+        "section_id": "section_ch1620",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.562845766544342,
+        "score": 0.5578457665443419,
+        "text_preview": "Отладка"
+      },
+      {
+        "node_id": "chunk_ch0835",
+        "section_id": "section_ch0835",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7452839016914368,
+        "score": 0.5552839016914367,
+        "text_preview": "Возможные состояния рассылки"
+      },
+      {
+        "node_id": "chunk_ch0199",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7354374527931213,
+        "score": 0.5454374527931213,
+        "text_preview": "2. Создать рассылку и настроить ее на"
+      },
+      {
+        "node_id": "chunk_ch0855",
+        "section_id": "section_ch0855",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7299230098724365,
+        "score": 0.5399230098724365,
+        "text_preview": "Запуск рассылки"
+      },
+      {
+        "node_id": "chunk_ch0122",
+        "section_id": "section_ch0113",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.6623539328575134,
+        "score": 0.5373539328575134,
+        "text_preview": "Рисунок 19 — Создан сценарий простейшей рассылки"
+      },
+      {
+        "node_id": "chunk_ch1737",
+        "section_id": "section_ch1737",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7258382439613342,
+        "score": 0.5358382439613342,
+        "text_preview": "Аудит запусков рассылок"
+      },
+      {
+        "node_id": "chunk_ch0116",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5392301082611084,
+        "score": 0.5342301082611083,
+        "text_preview": "• события Start;\n• блоков действий;\n• связей между блоками действий."
+      },
+      {
+        "node_id": "chunk_ch1621",
+        "section_id": "section_ch1620",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5377197861671448,
+        "score": 0.5327197861671447,
+        "text_preview": "При работе с рассылками, которые начинаются при возникновении события, часто необходимо узнать, почему клиент или множество клиентов не получили рассылку. В консоли маркетолога есть специальный раздел…"
+      },
+      {
+        "node_id": "chunk_ch0114",
+        "section_id": "section_ch0113",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5323660969734192,
+        "score": 0.5273660969734191,
+        "text_preview": "Конструктор позволяет задать сценарий рассылки, который будет выполняться для каждого клиента из аудитории рассылки."
+      },
+      {
+        "node_id": "chunk_ch0349",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.6942573189735413,
+        "score": 0.5042573189735412,
+        "text_preview": "клиентов). Это позволит начать одну или несколько других рассылок. Текущая рассылка при этом не будет остановлена, ее сценарий продолжит выполняться."
+      },
+      {
+        "node_id": "chunk_ch0125",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.6781958937644958,
+        "score": 0.4881958937644958,
+        "text_preview": "Блоки действий"
+      },
+      {
+        "node_id": "chunk_ch0241",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.6781958937644958,
+        "score": 0.4881958937644958,
+        "text_preview": "Блоки действий"
+      }
+    ],
+    "ranked_sim_stats": {
+      "min": 0.5323660969734192,
+      "max": 0.9224387407302856,
+      "mean": 0.7040027230978012
+    },
+    "type_counts_in_topk": {
+      "chunk": 19,
+      "caption": 1
+    }
+  }
+}

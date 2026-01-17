@@ -1,0 +1,19 @@
+{
+  "qid": "Q004",
+  "judge": {
+    "name": "gemini-2.5-flash-lite",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671320,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 3
+  },
+  "status": "ERROR",
+  "raw_response_text": "```json\n{\n  \"decision\": \"Tie\",\n  \"reason\": \"Оба кандидата содержат идентичную информацию, которая не имеет отношения к запросу пользователя о добавлении и редактировании медиа групп. Информация касается редактирования событий.\"\n}\n```",
+  "parsed_json": null,
+  "error": "'decision' must be 'A', 'B', or ''"
+}

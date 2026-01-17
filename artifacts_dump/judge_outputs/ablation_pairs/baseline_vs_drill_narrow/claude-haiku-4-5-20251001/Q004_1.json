@@ -1,0 +1,19 @@
+{
+  "qid": "Q004",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671167,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 3
+  },
+  "status": "ERROR",
+  "raw_response_text": "```json\n{\n  \"decision\": \"Tie\",\n  \"reason\": \"Both contexts are identical in their substantive content and both are completely irrelevant to the user query about adding and editing media groups. Neither context contains any information about media groups, making them equally unhelpful for answering the query.\"\n}\n```",
+  "parsed_json": null,
+  "error": "'decision' must be 'A', 'B', or ''"
+}

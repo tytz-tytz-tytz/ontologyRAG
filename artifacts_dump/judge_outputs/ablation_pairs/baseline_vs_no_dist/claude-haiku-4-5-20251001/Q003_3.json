@@ -1,0 +1,22 @@
+{
+  "qid": "Q003",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671553,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"B\",\n  \"reason\": \"Context B directly addresses adding action blocks to mailings by explaining the scenario constructor, the 'Add block' button for adding action blocks, and how blocks are connected. Context A only discusses ordering messages within a single block, which is unrelated to the query about adding actions to mailing blocks.\"\n}\n```",
+  "parsed_json": {
+    "decision": "B",
+    "reason": "Context B directly addresses adding action blocks to mailings by explaining the scenario constructor, the 'Add block' button for adding action blocks, and how blocks are connected. Context A only discusses ordering messages within a single block, which is unrelated to the query about adding actions to mailing blocks."
+  },
+  "error": null
+}

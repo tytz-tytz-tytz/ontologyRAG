@@ -1,0 +1,273 @@
+{
+  "query": "настройки вопросов форм",
+  "drill": {
+    "config": {
+      "top_r": 3,
+      "top_k": 2,
+      "tau_local": 0.35,
+      "tau_child": 0.45,
+      "margin": 0.05
+    },
+    "seed_count": 4,
+    "seed_ids": [
+      "section_ch0681",
+      "section_ch1344",
+      "section_ch0626",
+      "section_ch1321"
+    ],
+    "seed_levels": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "seed_local_sim_stats": {
+      "min": 0.4251212179660797,
+      "max": 0.6842452883720398,
+      "mean": 0.5605768784880638
+    },
+    "seed_subtree_sim_stats": {
+      "min": 0.4251212179660797,
+      "max": 0.6842452883720398,
+      "mean": 0.5605768784880638
+    }
+  },
+  "expand": {
+    "config": {
+      "max_depth": 3,
+      "max_nodes": 800,
+      "allowed_relations": [
+        "CAPTIONS",
+        "HAS_CHUNK",
+        "HAS_ITEM",
+        "HAS_SUBSECTION",
+        "LINKS_TO"
+      ]
+    },
+    "expanded_node_count": 229,
+    "expanded_edge_count": 227,
+    "dist_stats": {
+      "min": 0,
+      "max": 3,
+      "mean": 1.685589519650655
+    },
+    "edge_type_counts": {
+      "HAS_CHUNK": 174,
+      "HAS_SUBSECTION": 4,
+      "HAS_ITEM": 32,
+      "CAPTIONS": 13,
+      "LINKS_TO": 4
+    }
+  },
+  "score": {
+    "config": {
+      "mode": "full",
+      "w_text": 1.0,
+      "w_type": 0.3,
+      "w_level": 0.15,
+      "w_dist": 0.2,
+      "type_bonus": {
+        "list_item": 1.0,
+        "chunk": 0.6,
+        "section_title": 0.8,
+        "caption": 0.2
+      },
+      "level_bonus": {
+        "1": 0.1,
+        "2": 0.2,
+        "3": 0.3
+      }
+    },
+    "top_nodes": [
+      {
+        "node_id": "chunk_ch1322",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7484868764877319,
+        "score": 0.7584868764877319,
+        "text_preview": "Маркетолог задает тип вопроса и его настройки при добавлении вопроса на форму. Для этого нужно:"
+      },
+      {
+        "node_id": "chunk_ch1321",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.7407190203666687,
+        "score": 0.7507190203666687,
+        "text_preview": "Основные настройки вопросов"
+      },
+      {
+        "node_id": "chunk_ch1344",
+        "section_id": "section_ch1344",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6731685996055603,
+        "score": 0.6831685996055603,
+        "text_preview": "Настройка условий отправки вопросов"
+      },
+      {
+        "node_id": "chunk_ch1327",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5954621434211731,
+        "score": 0.6054621434211731,
+        "text_preview": "3. Добавленный вопрос появится в списке слева. Справа необходимо задать настройки вопроса. К основным настройкам вопроса относятся:"
+      },
+      {
+        "node_id": "chunk_ch1323",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5928479433059692,
+        "score": 0.6028479433059692,
+        "text_preview": "1. Нажать на форме на кнопку .\n2. В открывшемся окне нажать на кнопку «Добавить вопрос» и выбрать тип вопроса из предложенного списка (см. Рисунок 143)."
+      },
+      {
+        "node_id": "chunk_ch1329",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5889512896537781,
+        "score": 0.5989512896537781,
+        "text_preview": "Использование ответов на вопросы"
+      },
+      {
+        "node_id": "chunk_ch0627",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5553344488143921,
+        "score": 0.5653344488143921,
+        "text_preview": "Для рассылок, начинающихся по событию или тегу, группа расширенных настроек имеет следующий вид (см. Рисунок 86):"
+      },
+      {
+        "node_id": "chunk_ch0630",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5530540347099304,
+        "score": 0.5630540347099304,
+        "text_preview": "Для рассылок с фиксированной аудиторией группа расширенных настроек имеет следующий вид (см. Рисунок 87):"
+      },
+      {
+        "node_id": "chunk_ch0655",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5480518937110901,
+        "score": 0.5580518937110901,
+        "text_preview": "Тег может быть снят двумя способами:"
+      },
+      {
+        "node_id": "chunk_ch1345",
+        "section_id": "section_ch1344",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5272064805030823,
+        "score": 0.5372064805030823,
+        "text_preview": "Форма позволяет настраивать условия, при которых вопросы отправляются клиенту. Это полезно, если вопрос уместно задавать только в некоторых случаях. Например, если клиент поставил низкую оценку за кач…"
+      },
+      {
+        "node_id": "chunk_ch0652",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.523545503616333,
+        "score": 0.533545503616333,
+        "text_preview": "Подробнее о тегах см. в разделе"
+      },
+      {
+        "node_id": "chunk_ch0649",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.521759033203125,
+        "score": 0.531759033203125,
+        "text_preview": "В группу расширенных настроек также входят следующие опции:"
+      },
+      {
+        "node_id": "chunk_ch0626",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5161548852920532,
+        "score": 0.5261548852920532,
+        "text_preview": "Расширенные настройки"
+      },
+      {
+        "node_id": "chunk_ch1326",
+        "section_id": "section_ch1321",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.6124252080917358,
+        "score": 0.502425208091736,
+        "text_preview": "Рисунок 143 — Выбор типа добавляемого вопроса"
+      },
+      {
+        "node_id": "chunk_ch0653",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.491385817527771,
+        "score": 0.501385817527771,
+        "text_preview": "Работа с тегами"
+      },
+      {
+        "node_id": "chunk_ch0633",
+        "section_id": "section_ch0626",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.48854824900627136,
+        "score": 0.4985482490062713,
+        "text_preview": "Подробнее о типах аудитории см. в разделе"
+      },
+      {
+        "node_id": "chunk_ch1349",
+        "section_id": "section_ch1344",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.6055612564086914,
+        "score": 0.4955612564086915,
+        "text_preview": "Рисунок 146 — Добавление вопроса, который будет задан при выполнении определенного условия"
+      },
+      {
+        "node_id": "chunk_ch1331",
+        "section_id": "section_ch1321",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.482247531414032,
+        "score": 0.49224753141403194,
+        "text_preview": "• Вопрос – текст вопроса, который бот отправит клиенту в мессенджер. Для вопросов всех типов, кроме «Короткий текст», рекомендуется формулировать, что ожидается от клиента. Например, не задавать вопро…"
+      },
+      {
+        "node_id": "chunk_ch0683",
+        "section_id": "section_ch0681",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.49685239791870117,
+        "score": 0.4918523979187011,
+        "text_preview": "Таблица 3 — Определение типа аудитории в зависимости от условий начала рассылки"
+      },
+      {
+        "node_id": "chunk_ch1346",
+        "section_id": "section_ch1344",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.45642879605293274,
+        "score": 0.4664287960529327,
+        "text_preview": "При этом есть очевидное ограничение – условный вопрос должен располагаться в списке после вопроса, ответ на который проверяется."
+      }
+    ],
+    "ranked_sim_stats": {
+      "min": 0.45642879605293274,
+      "max": 0.7484868764877319,
+      "mean": 0.5659095704555511
+    },
+    "type_counts_in_topk": {
+      "chunk": 18,
+      "caption": 2
+    }
+  }
+}

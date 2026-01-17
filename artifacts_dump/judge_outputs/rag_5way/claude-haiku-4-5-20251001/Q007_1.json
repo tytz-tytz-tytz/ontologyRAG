@@ -1,0 +1,63 @@
+{
+  "qid": "Q007",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 1,
+    "temperature": 0.2,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768667905,
+    "input_messages_count": 2
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"relevance\": {\n    \"A\": 2,\n    \"B\": 4,\n    \"C\": 4,\n    \"D\": 5,\n    \"E\": 5\n  },\n  \"answerability\": {\n    \"A\": 1,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 4,\n    \"E\": 4\n  },\n  \"noise\": {\n    \"A\": 4,\n    \"B\": 2,\n    \"C\": 2,\n    \"D\": 1,\n    \"E\": 3\n  },\n  \"overall\": {\n    \"A\": 1,\n    \"B\": 3,\n    \"C\": 3,\n    \"D\": 5,\n    \"E\": 4\n  },\n  \"winner\": \"D\",\n  \"ranking\": [\n    \"D\",\n    \"E\",\n    \"B\",\n    \"C\",\n    \"A\"\n  ],\n  \"failure_letters\": [],\n  \"confidence\": 4,\n  \"rationales\": {\n    \"A\": \"Highly fragmented with mostly chunk separators and incomplete sentences. Mentions macro types but lacks coherent explanation of how to use macros in the newsletter constructor.\",\n    \"B\": \"Relevant content about macros in newsletters with information about static audiences and macro values, but lacks practical guidance on using macros in the constructor itself.\",\n    \"C\": \"Similar to B with relevant information about macro usage in static audiences and event-triggered campaigns, but fragmented and lacks clear practical instructions for the constructor.\",\n    \"D\": \"Directly addresses the query with clear, practical explanation of macro usage in the newsletter constructor, including concrete examples (customer_name, customer_discount) and how to implement them.\",\n    \"E\": \"Highly relevant with explicit statement that macros can be used in almost all text fields of the newsletter constructor, plus technical details about macro objects and usage patterns, though somewhat fragmented.\"\n  }\n}\n```",
+  "parsed_json": {
+    "relevance": {
+      "A": 2,
+      "B": 4,
+      "C": 4,
+      "D": 5,
+      "E": 5
+    },
+    "answerability": {
+      "A": 1,
+      "B": 3,
+      "C": 3,
+      "D": 4,
+      "E": 4
+    },
+    "noise": {
+      "A": 4,
+      "B": 2,
+      "C": 2,
+      "D": 1,
+      "E": 3
+    },
+    "overall": {
+      "A": 1,
+      "B": 3,
+      "C": 3,
+      "D": 5,
+      "E": 4
+    },
+    "winner": "D",
+    "ranking": [
+      "D",
+      "E",
+      "B",
+      "C",
+      "A"
+    ],
+    "failure_letters": [],
+    "confidence": 4,
+    "rationales": {
+      "A": "Highly fragmented with mostly chunk separators and incomplete sentences. Mentions macro types but lacks coherent explanation of how to use macros in the newsletter constructor.",
+      "B": "Relevant content about macros in newsletters with information about static audiences and macro values, but lacks practical guidance on using macros in the constructor itself.",
+      "C": "Similar to B with relevant information about macro usage in static audiences and event-triggered campaigns, but fragmented and lacks clear practical instructions for the constructor.",
+      "D": "Directly addresses the query with clear, practical explanation of macro usage in the newsletter constructor, including concrete examples (customer_name, customer_discount) and how to implement them.",
+      "E": "Highly relevant with explicit statement that macros can be used in almost all text fields of the newsletter constructor, plus technical details about macro objects and usage patterns, though somewhat fragmented."
+    }
+  },
+  "error": null
+}

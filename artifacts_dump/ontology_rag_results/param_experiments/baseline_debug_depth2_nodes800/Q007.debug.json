@@ -1,0 +1,270 @@
+{
+  "query": "макросы в конструкторе рассылок",
+  "drill": {
+    "config": {
+      "top_r": 3,
+      "top_k": 2,
+      "tau_local": 0.35,
+      "tau_child": 0.45,
+      "margin": 0.05
+    },
+    "seed_count": 3,
+    "seed_ids": [
+      "section_ch2133",
+      "section_ch0113",
+      "section_ch1147"
+    ],
+    "seed_levels": [
+      1,
+      1,
+      1
+    ],
+    "seed_local_sim_stats": {
+      "min": 0.48251667618751526,
+      "max": 0.6713134050369263,
+      "mean": 0.6075123449166616
+    },
+    "seed_subtree_sim_stats": {
+      "min": 0.48251667618751526,
+      "max": 0.6713134050369263,
+      "mean": 0.6075123449166616
+    }
+  },
+  "expand": {
+    "config": {
+      "max_depth": 2,
+      "max_nodes": 800,
+      "allowed_relations": [
+        "CAPTIONS",
+        "HAS_CHUNK",
+        "HAS_ITEM",
+        "HAS_SUBSECTION",
+        "LINKS_TO"
+      ]
+    },
+    "expanded_node_count": 383,
+    "expanded_edge_count": 380,
+    "dist_stats": {
+      "min": 0,
+      "max": 2,
+      "mean": 1.8485639686684072
+    },
+    "edge_type_counts": {
+      "HAS_CHUNK": 352,
+      "HAS_SUBSECTION": 16,
+      "HAS_ITEM": 10,
+      "CAPTIONS": 2
+    }
+  },
+  "score": {
+    "config": {
+      "mode": "full",
+      "w_text": 1.0,
+      "w_type": 0.3,
+      "w_level": 0.15,
+      "w_dist": 0.2,
+      "type_bonus": {
+        "list_item": 1.0,
+        "chunk": 0.6,
+        "section_title": 0.8,
+        "caption": 0.2
+      },
+      "level_bonus": {
+        "1": 0.1,
+        "2": 0.2,
+        "3": 0.3
+      }
+    },
+    "top_nodes": [
+      {
+        "node_id": "chunk_ch1147",
+        "section_id": "section_ch1147",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.8323674201965332,
+        "score": 0.8273674201965331,
+        "text_preview": "Использование макросов"
+      },
+      {
+        "node_id": "chunk_ch2133",
+        "section_id": "section_ch2133",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.8161545395851135,
+        "score": 0.8111545395851134,
+        "text_preview": "Приложение Б. Типы макросов"
+      },
+      {
+        "node_id": "chunk_ch1148",
+        "section_id": "section_ch1147",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6774012446403503,
+        "score": 0.6724012446403502,
+        "text_preview": "Макросы позволяют персонифицировать рассылки для клиентов. Например, можно создать рассылку (см. Рисунок 134), в тексте которой используются два макроса:"
+      },
+      {
+        "node_id": "chunk_ch0180",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8525086045265198,
+        "score": 0.6625086045265197,
+        "text_preview": "разделе «Использование макросов»"
+      },
+      {
+        "node_id": "chunk_ch0176",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8525086045265198,
+        "score": 0.6625086045265197,
+        "text_preview": "разделе «Использование макросов»"
+      },
+      {
+        "node_id": "chunk_ch0337",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8323674201965332,
+        "score": 0.6423674201965331,
+        "text_preview": "Использование макросов"
+      },
+      {
+        "node_id": "chunk_ch0191",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8154168128967285,
+        "score": 0.6254168128967285,
+        "text_preview": "макросы"
+      },
+      {
+        "node_id": "chunk_ch0366",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.8154168128967285,
+        "score": 0.6254168128967285,
+        "text_preview": "макросы"
+      },
+      {
+        "node_id": "chunk_ch1175",
+        "section_id": "section_ch1147",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.6255415678024292,
+        "score": 0.6205415678024291,
+        "text_preview": "\"macroses\": ["
+      },
+      {
+        "node_id": "chunk_ch1188",
+        "section_id": "section_ch1188",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7834712862968445,
+        "score": 0.5934712862968444,
+        "text_preview": "Поля, в которых можно использовать макросы"
+      },
+      {
+        "node_id": "chunk_ch2140",
+        "section_id": "section_ch2133",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5850703120231628,
+        "score": 0.5800703120231627,
+        "text_preview": "Для отправки клиентам в макросах рассылки персонализированных многострочных текстов можно использовать символ разделения строк — \\n (в макросах типа «string»). Эта возможность доступна только для API-…"
+      },
+      {
+        "node_id": "chunk_ch1254",
+        "section_id": "section_ch1247",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7634603977203369,
+        "score": 0.5734603977203369,
+        "text_preview": "{{ macros_1 }}"
+      },
+      {
+        "node_id": "chunk_ch0175",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7470828294754028,
+        "score": 0.5570828294754028,
+        "text_preview": "Для реализации этого сценария необходимо использовать макросы, см. в"
+      },
+      {
+        "node_id": "chunk_ch0273",
+        "section_id": "section_ch0125",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7454360723495483,
+        "score": 0.5554360723495483,
+        "text_preview": "макроса"
+      },
+      {
+        "node_id": "chunk_ch1151",
+        "section_id": "section_ch1147",
+        "type": "caption",
+        "dist": 1,
+        "sim": 0.677124559879303,
+        "score": 0.552124559879303,
+        "text_preview": "Рисунок 134 — Рассылка, использующая два макроса"
+      },
+      {
+        "node_id": "chunk_ch1253",
+        "section_id": "section_ch1247",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7210749983787537,
+        "score": 0.5310749983787536,
+        "text_preview": "макросы задаются как обычно, в двойных фигурных скобках. Например:"
+      },
+      {
+        "node_id": "chunk_ch1204",
+        "section_id": "section_ch1204",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7191423773765564,
+        "score": 0.5291423773765563,
+        "text_preview": "Создание и удаление макросов рассылки"
+      },
+      {
+        "node_id": "chunk_ch1217",
+        "section_id": "section_ch1217",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7092571258544922,
+        "score": 0.5192571258544921,
+        "text_preview": "Определение значений макросов для клиентов"
+      },
+      {
+        "node_id": "chunk_ch2134",
+        "section_id": "section_ch2133",
+        "type": "chunk",
+        "dist": 1,
+        "sim": 0.5177839994430542,
+        "score": 0.5127839994430541,
+        "text_preview": "Макросы могут иметь следующие типы:"
+      },
+      {
+        "node_id": "chunk_ch1189",
+        "section_id": "section_ch1188",
+        "type": "chunk",
+        "dist": 2,
+        "sim": 0.7000388503074646,
+        "score": 0.5100388503074645,
+        "text_preview": "Макросы можно использовать почти во всех текстовых полях конструктора рассылок:"
+      }
+    ],
+    "ranked_sim_stats": {
+      "min": 0.5177839994430542,
+      "max": 0.8525086045265198,
+      "mean": 0.7394312918186188
+    },
+    "type_counts_in_topk": {
+      "chunk": 19,
+      "caption": 1
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "Q010",
+  "judge": {
+    "name": "claude-haiku-4-5-20251001",
+    "replica": 3,
+    "temperature": 0.3,
+    "max_output_tokens": 1200
+  },
+  "meta": {
+    "created_at_unix": 1768671658,
+    "input_messages_count": 2,
+    "schema_mode": "pairwise",
+    "attempts": 1
+  },
+  "status": "OK",
+  "raw_response_text": "```json\n{\n  \"decision\": \"A\",\n  \"reason\": \"Candidate A directly addresses the user query about widget creation and configuration, providing step-by-step instructions for creating a widget. Candidate B discusses mailing campaign settings and conditions, which is completely unrelated to widget creation and configuration.\"\n}\n```",
+  "parsed_json": {
+    "decision": "A",
+    "reason": "Candidate A directly addresses the user query about widget creation and configuration, providing step-by-step instructions for creating a widget. Candidate B discusses mailing campaign settings and conditions, which is completely unrelated to widget creation and configuration."
+  },
+  "error": null
+}
